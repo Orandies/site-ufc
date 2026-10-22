@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>United Furry Con — Создание бойца</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="crt"></div>
+<div class="grain"></div>
+<div class="scanlines"></div>
+<div class="tracking"></div>
+<div class="vignette"></div>
+
+<div class="ticker">
+  <div class="ticker-track">
+    UNITED FURRY CON /// VIP FIGHTER PASS /// СОЗДАЙ СВОЕГО БОЙЦА /// ПОПАДИ В ИГРУ /// UNITED FURRY CON /// VIP FIGHTER PASS ///
+  </div>
+</div>
+
+<div class="container">
+
+  <header class="masthead">
+    <div class="mast-top">
+      <span class="badge">VIP PASS</span>
+      <span class="mast-code">UFC // FIGHTER EDITOR v1.0</span>
+      <span class="rec"><i></i> REC</span>
+    </div>
+    <h1><i data-icon="fox"></i> UNITED FURRY CON<span class="cursor">_</span></h1>
+    <p class="subtitle">Твоя фурсона. Твой приём. Твой раунд.</p>
+    <div class="mast-strip"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </header>
+
+  <div class="main-layout">
+
+    <aside class="preview-panel">
+      <div class="panel-head">
+        <i data-icon="eye"></i><span>ПЕРЕДСТАНОВКА</span><b class="tag">P1</b>
+      </div>
+
+      <div class="stage">
+        <div class="stage-floor"></div>
+        <div class="hero-anchor">
+          <div class="hero-sprite" id="heroSprite"></div>
+        </div>
+        <div class="stage-tag" id="heroClassTag">ВЫБЕРИ КЛАСС</div>
+      </div>
+
+      <div class="animal-selector">
+        <div class="animal-selector-title">ТИП БОЙЦА</div>
+        <div class="animal-selector-row" id="animalSelector"></div>
+      </div>
+
+      <div class="hero-name" id="heroName">ИГРОК 1</div>
+      <div class="hero-loadout" id="heroLoadout"></div>
+      <div class="hero-stats" id="heroStats"></div>
+
+      <div class="build-line">
+        <span>ЖЕТОНЫ</span>
+        <div class="mini-meter"><i id="buildFill"></i></div>
+        <b id="buildText">0/10</b>
+      </div>
+
+      <p class="panel-note">
+        Пришли референс своей фурсоны. Мы нарисуем по нему спрайты.
+        Мелкие детали будут упрощены до пиксель-арта.
+      </p>
+    </aside>
+
+    <form id="characterForm" class="pixel-form">
+
+      <fieldset data-accent="yellow">
+        <legend><i data-icon="file"></i> БАЗОВЫЕ ДАННЫЕ</legend>
+
+        <div class="form-group">
+          <label for="charName">Имя персонажа <span class="limit">/ 12 символов</span></label>
+          <input type="text" id="charName" name="charName" maxlength="12" placeholder="REX" required>
+        </div>
+
+        <div class="form-group">
+          <label for="refLink">Ссылка на референс</label>
+          <input type="url" id="refLink" name="refLink" placeholder="https://..." required>
+        </div>
+
+        <div class="form-group">
+          <label for="visualDetail">Одна ключевая деталь</label>
+          <input type="text" id="visualDetail" name="visualDetail"
+                 placeholder="светящиеся глаза, длинный шарф, шрам" required>
+          <small class="hint">То, что обязательно должно остаться на спрайте.</small>
+        </div>
+      </fieldset>
+
+      <fieldset data-accent="orange">
+        <legend><i data-icon="sword"></i> КЛАСС БОЯ</legend>
+        <p class="section-hint">Меняет только анимации и оружие. На характеристики не влияет.</p>
+        <div class="class-grid" id="classGrid"></div>
+      </fieldset>
+
+      <fieldset data-accent="red" id="statsField">
+        <legend><i data-icon="chart"></i> РАСПРЕДЕЛЕНИЕ СИЛЫ</legend>
+
+        <div class="stat-header">
+          <div>
+            <span class="stat-header-label">ДОСТУПНО ЖЕТОНОВ</span>
+            <div class="token-line"><b id="tokensLeft">10</b><span>/ 10</span></div>
+          </div>
+          <p class="stat-help">Кликни по шкале или используй + / −<br>Максимум 5 в одну характеристику</p>
+        </div>
+
+        <div id="statsList"></div>
+      </fieldset>
+
+      <section class="arena-panel" id="arenaPanel">
+        <div class="panel-head">
+          <i data-icon="ult"></i><span>ДЕМО-АРЕНА</span><b class="tag cyan">LIVE</b>
+        </div>
+
+        <div class="arena" id="arena">
+          <div class="arena-bg"></div>
+
+          <div class="hud hud-p1">
+            <span class="hud-name" id="hudName">ИГРОК 1</span>
+            <div class="hp"><i id="hp1"></i></div>
+          </div>
+          <div class="hud hud-p2">
+            <span class="hud-name">СОПЕРНИК <em>P2</em></span>
+            <div class="hp"><i id="hp2"></i></div>
+          </div>
+
+          <div class="vs-mark">VS</div>
+          <div class="arena-floor"></div>
+
+          <div class="fighter f1" id="f1"><div class="sprite"></div></div>
+          <div class="fighter f2" id="f2"><div class="sprite"></div></div>
+
+          <div class="vfx" id="vfx"></div>
+          <div class="pop" id="pop"></div>
+          <div class="arena-status" id="arenaStatus">ВЫБЕРИ ПРИЁМ</div>
+        </div>
+
+        <div class="arena-controls">
+          <button type="button" class="pixel-btn play-btn" id="playUlt">
+            <i data-icon="play"></i> ПОКАЗАТЬ ПРИЁМ
+          </button>
+          <div class="super-meter">
+            <span>SUPER</span>
+            <div class="meter"><i id="meterFill"></i></div>
+          </div>
+        </div>
+
+        <p class="arena-desc" id="arenaDesc"></p>
+        <p class="arena-note">Демо-повтор. Урон и эффекты условные.</p>
+      </section>
+
+      <fieldset data-accent="cyan" id="ultField">
+        <legend><i data-icon="ult"></i> КОНСТРУКТОР УЛЬТИМЕЙТА</legend>
+        <p class="section-hint">Шкала заряжается от нанесённого и полученного урона.</p>
+
+        <div class="form-group">
+          <label for="ultType">1. Тип атаки</label>
+          <select id="ultType" name="ultType" class="pixel-select"></select>
+        </div>
+
+        <div class="form-group">
+          <label for="ultEffect">2. Игровой эффект</label>
+          <select id="ultEffect" name="ultEffect" class="pixel-select"></select>
+        </div>
+
+        <div class="form-group">
+          <label>3. Стихия эффекта</label>
+          <div class="element-row" id="elementRow"></div>
+        </div>
+      </fieldset>
+
+      <fieldset data-accent="green">
+        <legend><i data-icon="chat"></i> ЛИЧНОСТЬ</legend>
+
+        <div class="form-group">
+          <label for="winQuote">Фраза при победе <span class="limit">/ 40 символов</span></label>
+          <input type="text" id="winQuote" name="winQuote" maxlength="40"
+                 placeholder="Я только разминался!">
+        </div>
+
+        <div class="form-group">
+          <label for="ultQuote">Фраза при активации ульты <span class="limit">/ 40 символов</span></label>
+          <input type="text" id="ultQuote" name="ultQuote" maxlength="40"
+                 placeholder="Прими этот удар!">
+        </div>
+      </fieldset>
+
+      <button type="submit" class="pixel-btn submit-btn">
+        <i data-icon="check"></i> ОТПРАВИТЬ АНКЕТУ
+      </button>
+
+      <p class="form-foot">После отправки с тобой свяжутся организаторы United Furry Con.</p>
+    </form>
+
+  </div>
+</div>
+
+<div class="ticker bottom">
+  <div class="ticker-track">
+    UNITED FURRY CON /// PIXEL FIGHTER /// INSERT COIN /// YOUR FURSON HERE /// UNITED FURRY CON /// PIXEL FIGHTER ///
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
