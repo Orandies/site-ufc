@@ -3,11 +3,11 @@ const CONFIG = {
   maxPerStat: 5,
 
   stats: [
-    { key:'hp',     label:'ЗДОРОВЬЕ',    short:'ЗДР',   icon:'heart',   color:'#ff5a5f', hint:'+15% к запасу здоровья за жетон' },
-    { key:'dmg',    label:'УРОН',        short:'УРН',   icon:'fist',    color:'#ff9d3c', hint:'+10% к урону всех атак за жетон' },
-    { key:'spd',    label:'СКОРОСТЬ',    short:'CKР',   icon:'boot',    color:'#57d7ff', hint:'+5% к скорости передвижения за жетон' },
-    { key:'agi',    label:'ЛОВКОСТЬ',    short:'ЛВК',   icon:'agility', color:'#7ce38b', hint:'+8% к скорости атаки и быстрее восстановление' },
-    { key:'charge', label:'ЗАРЯД УЛЬТЫ', short:'ЗАР',   icon:'bolt',    color:'#ffd23f', hint:'+15% к скорости заполнения шкалы супера' }
+    { key:'hp',     label:'ЗДОРОВЬЕ',    short:'ЗДР',   icon:'heart',   color:'#ff5a5f', unit:'',    step:15,  base:100, hint:'+15 к здоровью за жетон' },
+    { key:'dmg',    label:'УРОН',        short:'УРН',   icon:'fist',    color:'#ff9d3c', unit:'',    step:2,   base:10,  hint:'+2 к урону всех атак за жетон' },
+    { key:'spd',    label:'СКОРОСТЬ',    short:'CKР',   icon:'boot',    color:'#57d7ff', unit:'%',   step:5,   base:100, hint:'+5% к скорости передвижения за жетон' },
+    { key:'agi',    label:'ЛОВКОСТЬ',    short:'ЛВК',   icon:'agility', color:'#7ce38b', unit:'%',   step:8,   base:100, hint:'+8% к скорости атаки за жетон' },
+    { key:'charge', label:'ЗАРЯД УЛЬТЫ', short:'ЗАР',   icon:'bolt',    color:'#ffd23f', unit:'%',   step:15,  base:100, hint:'+15% к скорости заполнения шкалы супера' }
   ],
 
   classes: [
@@ -15,7 +15,8 @@ const CONFIG = {
     { key:'kickbox', name:'КИКБОКСЕР', icon:'kick',  color:'#57d7ff', pose:'kick',    desc:'Ноги в приоритете: фронт-кики, лоу-кики и размашистые вертушки.' },
     { key:'acrobat', name:'АКРОБАТ',   icon:'agility',color:'#7ce38b', pose:'flurry',  desc:'Кувырки, сальто и удары с разворота. Самый вязкий стиль.' },
     { key:'brute',   name:'БОГАТЫРЬ',  icon:'fist',  color:'#ff9d3c', pose:'slam',    desc:'Тяжёлые замахивания и шлепки обеими руками по земле.' },
-    { key:'blade',   name:'КЛИНОК',    icon:'sword', color:'#c9d4ef', pose:'sword',   desc:'Тот же ближний бой, но с клинком: рубящие взмахи и выпады.' }
+    { key:'blade',   name:'КЛИНОК',    icon:'sword', color:'#c9d4ef', pose:'sword',   desc:'Тот же ближний бой, но с клинком: рубящие взмахи и выпады.' },
+    { key:'spear',   name:'КОПЕЙЩИК',  icon:'spear', color:'#a77bff', pose:'thrust',  desc:'Дальние подсечки и колющие выпады на вытянутых руках.' }
   ],
 
   ultTypes: [
@@ -77,7 +78,8 @@ const ICONS = {
   cosmos:`<rect x="7" y="2" width="2" height="12" fill="#c9a3ff"/><rect x="2" y="7" width="12" height="2" fill="#c9a3ff"/><rect x="4" y="4" width="2" height="2" fill="#6b4fa0"/><rect x="10" y="4" width="2" height="2" fill="#6b4fa0"/><rect x="4" y="10" width="2" height="2" fill="#6b4fa0"/><rect x="10" y="10" width="2" height="2" fill="#6b4fa0"/><rect x="6" y="6" width="4" height="4" fill="#ffffff"/>`,
   fox:`<rect x="2" y="2" width="3" height="5" fill="#ff9d3c"/><rect x="11" y="2" width="3" height="5" fill="#ff9d3c"/><rect x="3" y="3" width="1" height="2" fill="#ffe0a3"/><rect x="12" y="3" width="1" height="2" fill="#ffe0a3"/><rect x="3" y="5" width="10" height="7" fill="#ff9d3c"/><rect x="5" y="10" width="6" height="3" fill="#ffe0a3"/><rect x="5" y="7" width="2" height="2" fill="#1a1620"/><rect x="9" y="7" width="2" height="2" fill="#1a1620"/><rect x="7" y="10" width="2" height="2" fill="#1a1620"/>`,
   raccoon:`<rect x="2" y="2" width="3" height="5" fill="#7f8bb0"/><rect x="11" y="2" width="3" height="5" fill="#7f8bb0"/><rect x="3" y="3" width="1" height="2" fill="#dbe4ff"/><rect x="12" y="3" width="1" height="2" fill="#dbe4ff"/><rect x="3" y="5" width="10" height="7" fill="#7f8bb0"/><rect x="5" y="10" width="6" height="3" fill="#dbe4ff"/><rect x="5" y="7" width="2" height="2" fill="#1a1620"/><rect x="9" y="7" width="2" height="2" fill="#1a1620"/><rect x="7" y="10" width="2" height="2" fill="#1a1620"/>`,
-  dog:`<rect x="2" y="2" width="3" height="5" fill="#c9a37f"/><rect x="11" y="2" width="3" height="5" fill="#c9a37f"/><rect x="3" y="3" width="1" height="2" fill="#f5e6d0"/><rect x="12" y="3" width="1" height="2" fill="#f5e6d0"/><rect x="3" y="5" width="10" height="7" fill="#c9a37f"/><rect x="5" y="10" width="6" height="3" fill="#f5e6d0"/><rect x="5" y="7" width="2" height="2" fill="#1a1620"/><rect x="9" y="7" width="2" height="2" fill="#1a1620"/><rect x="7" y="10" width="2" height="2" fill="#1a1620"/>`
+  dog:`<rect x="2" y="2" width="3" height="5" fill="#c9a37f"/><rect x="11" y="2" width="3" height="5" fill="#c9a37f"/><rect x="3" y="3" width="1" height="2" fill="#f5e6d0"/><rect x="12" y="3" width="1" height="2" fill="#f5e6d0"/><rect x="3" y="5" width="10" height="7" fill="#c9a37f"/><rect x="5" y="10" width="6" height="3" fill="#f5e6d0"/><rect x="5" y="7" width="2" height="2" fill="#1a1620"/><rect x="9" y="7" width="2" height="2" fill="#1a1620"/><rect x="7" y="10" width="2" height="2" fill="#1a1620"/>`,
+  spear:`<rect x="10" y="1" width="2" height="4" fill="#c9d4ef"/><rect x="9" y="4" width="4" height="2" fill="#8fa2c8"/><rect x="10" y="6" width="2" height="7" fill="#8b5a2b"/><rect x="4" y="12" width="9" height="2" fill="#a77bff"/><rect x="3" y="13" width="3" height="2" fill="#6b4fa0"/>`
 };
 
 function icon(name){
@@ -291,12 +293,10 @@ function renderStats(){
       <div class="stat-bar">
         <div class="bar-track"></div>
         <div class="bar-fill" id="fill-${s.key}"></div>
-        ${Array.from({length:CONFIG.maxPerStat-1}, (_,i) =>
-          `<span class="bar-notch" style="left:${(i+1)*20}%"></span>`
-        ).join('')}
-        <div class="bar-hit">
+        <div class="bar-cells">
+          <span class="cell cell-base" id="base-${s.key}" title="Базовое значение — убрать нельзя">${s.base}</span>
           ${Array.from({length:CONFIG.maxPerStat}, (_,i) =>
-            `<button type="button" class="seg" data-level="${i+1}" aria-label="${s.label}: уровень ${i+1}"></button>`
+            `<button type="button" class="cell seg" data-level="${i+1}" aria-label="${s.label}: уровень ${i+1}" aria-pressed="false"></button>`
           ).join('')}
         </div>
       </div>
@@ -330,21 +330,34 @@ function renderHero(){
 }
 
 function calculateStats(){
-  const base = { hp: 100, dmg: 10, spd: 100, agi: 100, charge: 100 };
-  const multipliers = {
-    hp: 1 + (state.stats.hp * 0.15),
-    dmg: 1 + (state.stats.dmg * 0.10),
-    spd: 1 + (state.stats.spd * 0.05),
-    agi: 1 + (state.stats.agi * 0.08),
-    charge: 1 + (state.stats.charge * 0.15)
-  };
-  return {
-    hp: Math.round(base.hp * multipliers.hp),
-    dmg: Math.round(base.dmg * multipliers.dmg * 10) / 10,
-    spd: Math.round(base.spd * multipliers.spd),
-    agi: Math.round(base.agi * multipliers.agi),
-    charge: Math.round(base.charge * multipliers.charge)
-  };
+  const result = {};
+  CONFIG.stats.forEach(s => {
+    result[s.key] = s.base + state.stats[s.key] * s.step;
+  });
+  return result;
+}
+
+function formatStat(s, value){
+  return `${value}${s.unit}`;
+}
+
+function renderFinalStats(){
+  const calc = calculateStats();
+  $('finalStats').innerHTML = `
+    <div class="final-stats-title"><i></i> ИТОГОВЫЕ ХАРАКТЕРИСТИКИ</div>
+    <div class="final-grid">
+      ${CONFIG.stats.map(s => `
+        <div class="final-cell" style="--stat:${s.color}">
+          <span class="final-name">${icon(s.icon)}${s.label}</span>
+          <div class="final-line">
+            <span class="final-base" title="Первоначальное значение">${s.base}</span>
+            <span class="final-plus">+</span>
+            <span class="final-bonus">${state.stats[s.key] * s.step}</span>
+            <span class="final-eq">=</span>
+            <span class="final-total">${formatStat(s, calc[s.key])}</span>
+          </div>
+        </div>`).join('')}
+    </div>`;
 }
 
 function updateLoadout(){
@@ -368,7 +381,10 @@ function updateStatsUI(){
     });
 
     const fill = $(`fill-${s.key}`);
-    if(fill) fill.style.width = (val / CONFIG.maxPerStat * 100) + '%';
+    if(fill){
+      const cells = CONFIG.maxPerStat + 1; // базовая ячейка + ячейки жетонов
+      fill.style.width = `calc(${(val + 1) / cells * 100}% - ${(cells - val - 1) * 4}px)`;
+    }
 
     const minus = row.querySelector('.step[data-dir="-1"]');
     const plus = row.querySelector('.step[data-dir="1"]');
@@ -377,6 +393,7 @@ function updateStatsUI(){
   });
 
   updateLoadout();
+  renderFinalStats();
 }
 
 function setStat(key, value){
@@ -422,6 +439,11 @@ function resetArena(){
 
   f1.className = 'fighter f1';
   f2.className = 'fighter f2';
+  f1.style.left = '';
+  f1.style.right = '';
+  f1.style.opacity = '';
+  f1.style.transition = '';
+  f1.style.transform = '';
   f1.style.removeProperty('--lunge');
   f2.style.removeProperty('--knock');
 
@@ -508,6 +530,11 @@ async function playUlt(){
   pop.className = 'pop';
   f1.className = 'fighter f1';
   f2.className = 'fighter f2';
+  f1.style.left = '';
+  f1.style.right = '';
+  f1.style.opacity = '';
+  f1.style.transition = '';
+  f1.style.transform = '';
   $('hp1').style.width = '70%';
   $('hp2').style.width = '100%';
 
@@ -562,11 +589,24 @@ async function playUlt(){
       if(!alive(token)) return;
 
     } else if(t.key === 'teleport'){
+      const startX = g.x1;
+      const backX = g.x2 + g.width * 0.55;
+      f1.style.transition = 'none';
       f1.style.opacity = '0';
       await sleep(300);
       if(!alive(token)) return;
-      f1.style.left = 'auto';
-      f1.style.right = '12%';
+      f1.style.left = (backX - g.width / 2) + 'px';
+      f1.style.right = 'auto';
+      f1.classList.add('behind');
+      f1.style.opacity = '1';
+      await sleep(250);
+      if(!alive(token)) return;
+      f1.style.transition = 'opacity .2s steps(3)';
+      f1.style.opacity = '0';
+      await sleep(220);
+      if(!alive(token)) return;
+      f1.classList.remove('behind');
+      f1.style.left = (startX - g.width / 2) + 'px';
       f1.style.opacity = '1';
       await sleep(200);
       if(!alive(token)) return;
