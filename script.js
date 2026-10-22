@@ -3,17 +3,19 @@ const CONFIG = {
   maxPerStat: 5,
 
   stats: [
-    { key:'hp',     label:'ЗДОРОВЬЕ',    icon:'heart',   color:'#ff5a5f', hint:'+15% к запасу здоровья за жетон' },
-    { key:'dmg',    label:'УРОН',        icon:'fist',    color:'#ff9d3c', hint:'+10% к урону всех атак за жетон' },
-    { key:'spd',    label:'СКОРОСТЬ',    icon:'boot',    color:'#57d7ff', hint:'+5% к скорости передвижения за жетон' },
-    { key:'agi',    label:'ЛОВКОСТЬ',    icon:'agility', color:'#7ce38b', hint:'+8% к скорости атаки и быстрее восстановление' },
-    { key:'charge', label:'ЗАРЯД УЛЬТЫ', icon:'bolt',    color:'#ffd23f', hint:'+15% к скорости заполнения шкалы супера' }
+    { key:'hp',     label:'ЗДОРОВЬЕ',    short:'ЗДР',   icon:'heart',   color:'#ff5a5f', hint:'+15% к запасу здоровья за жетон' },
+    { key:'dmg',    label:'УРОН',        short:'УРН',   icon:'fist',    color:'#ff9d3c', hint:'+10% к урону всех атак за жетон' },
+    { key:'spd',    label:'СКОРОСТЬ',    short:'CKР',   icon:'boot',    color:'#57d7ff', hint:'+5% к скорости передвижения за жетон' },
+    { key:'agi',    label:'ЛОВКОСТЬ',    short:'ЛВК',   icon:'agility', color:'#7ce38b', hint:'+8% к скорости атаки и быстрее восстановление' },
+    { key:'charge', label:'ЗАРЯД УЛЬТЫ', short:'ЗАР',   icon:'bolt',    color:'#ffd23f', hint:'+15% к скорости заполнения шкалы супера' }
   ],
 
   classes: [
-    { key:'brawler', name:'БОРЕЦ',      icon:'glove', color:'#ff5a5f', pose:'guard', desc:'Кулаки и когти. Быстрая серия вблизи.' },
-    { key:'acrobat', name:'АКРОБАТ',    icon:'kick',  color:'#57d7ff', pose:'kick',  desc:'Удары ногами и вертушки. Две ноги, длинный пинок.' },
-    { key:'weapon',  name:'ОРУЖЕЙНИК',  icon:'sword', color:'#c9d4ef', pose:'sword', desc:'Меч или копьё. Длинный хитбокс.' }
+    { key:'brawler', name:'БОРЕЦ',     icon:'glove', color:'#ff5a5f', pose:'guard',   desc:'Стойка с кулаками у лица. Быстрые серии джебов и хуков.' },
+    { key:'kickbox', name:'КИКБОКСЕР', icon:'kick',  color:'#57d7ff', pose:'kick',    desc:'Ноги в приоритете: фронт-кики, лоу-кики и размашистые вертушки.' },
+    { key:'acrobat', name:'АКРОБАТ',   icon:'agility',color:'#7ce38b', pose:'flurry',  desc:'Кувырки, сальто и удары с разворота. Самый вязкий стиль.' },
+    { key:'brute',   name:'БОГАТЫРЬ',  icon:'fist',  color:'#ff9d3c', pose:'slam',    desc:'Тяжёлые замахивания и шлепки обеими руками по земле.' },
+    { key:'blade',   name:'КЛИНОК',    icon:'sword', color:'#c9d4ef', pose:'sword',   desc:'Тот же ближний бой, но с клинком: рубящие взмахи и выпады.' }
   ],
 
   ultTypes: [
@@ -287,9 +289,16 @@ function renderStats(){
     <div class="stat-row" data-stat="${s.key}" style="--stat:${s.color}" title="${s.hint}">
       <span class="stat-name">${icon(s.icon)}${s.label}</span>
       <div class="stat-bar">
-        ${Array.from({length:CONFIG.maxPerStat}, (_,i) =>
-          `<button type="button" class="seg" data-level="${i+1}" aria-label="${s.label}: уровень ${i+1}"></button>`
+        <div class="bar-track"></div>
+        <div class="bar-fill" id="fill-${s.key}"></div>
+        ${Array.from({length:CONFIG.maxPerStat-1}, (_,i) =>
+          `<span class="bar-notch" style="left:${(i+1)*20}%"></span>`
         ).join('')}
+        <div class="bar-hit">
+          ${Array.from({length:CONFIG.maxPerStat}, (_,i) =>
+            `<button type="button" class="seg" data-level="${i+1}" aria-label="${s.label}: уровень ${i+1}"></button>`
+          ).join('')}
+        </div>
       </div>
       <button type="button" class="step" data-dir="-1" aria-label="Уменьшить: ${s.label}">-</button>
       <span class="stat-value" id="val-${s.key}">0</span>
@@ -308,12 +317,6 @@ function renderElements(){
             style="--el:${e.color}" aria-pressed="false">${icon(e.icon)}${e.name}</button>`).join('');
 }
 
-function renderAnimalSelector(){
-  $('animalSelector').innerHTML = ANIMALS.map(a => `
-    <button type="button" class="animal-chip" data-animal="${a.key}"
-            style="--el:${a.color}" aria-pressed="false">${icon(a.key)}${a.name}</button>`).join('');
-}
-
 function currentClass(){ return byKey(CONFIG.classes, state.fighterClass); }
 function currentType(){ return byKey(CONFIG.ultTypes, state.ultType); }
 function currentEffect(){ return byKey(CONFIG.ultEffects, state.ultEffect); }
@@ -322,8 +325,8 @@ function totalSpent(){ return Object.values(state.stats).reduce((a,b) => a+b, 0)
 
 function renderHero(){
   const c = currentClass();
-  $('heroSprite').innerHTML = fighterSVG(c ? c.pose : 'idle', 'hero');
-  $('heroClassTag').textContent = c ? c.name : 'ВЫБЕРИ КЛАСС';
+  if($('heroSprite')) $('heroSprite').innerHTML = fighterSVG(c ? c.pose : 'idle', 'hero');
+  if($('heroClassTag')) $('heroClassTag').textContent = c ? c.name : 'ВЫБЕРИ КЛАСС';
 }
 
 function calculateStats(){
@@ -346,26 +349,7 @@ function calculateStats(){
 
 function updateLoadout(){
   const name = ($('charName').value.trim() || 'ИГРОК 1').toUpperCase();
-  $('heroName').textContent = name;
   $('hudName').textContent = name;
-
-  const active = CONFIG.stats.filter(s => state.stats[s.key] > 0);
-  $('heroLoadout').innerHTML = active.length
-    ? active.map(s => `<span class="loadout-chip" style="--chip:${s.color}">${icon(s.icon)}${state.stats[s.key]}</span>`).join('')
-    : `<span class="loadout-empty">Раздай жетоны ниже</span>`;
-
-  const total = totalSpent();
-  $('buildFill').style.width = (total / CONFIG.maxTokens * 100) + '%';
-  $('buildText').textContent = `${total}/${CONFIG.maxTokens}`;
-
-  const calcStats = calculateStats();
-  $('heroStats').innerHTML = `
-    <div class="stat-line">HP: <span>${calcStats.hp}</span></div>
-    <div class="stat-line">DMG: <span>${calcStats.dmg}</span></div>
-    <div class="stat-line">SPD: <span>${calcStats.spd}%</span></div>
-    <div class="stat-line">AGI: <span>${calcStats.agi}%</span></div>
-    <div class="stat-line">CHG: <span>${calcStats.charge}%</span></div>
-  `;
 }
 
 function updateStatsUI(){
@@ -382,6 +366,9 @@ function updateStatsUI(){
       seg.classList.toggle('on', i < val);
       seg.setAttribute('aria-pressed', i < val ? 'true' : 'false');
     });
+
+    const fill = $(`fill-${s.key}`);
+    if(fill) fill.style.width = (val / CONFIG.maxPerStat * 100) + '%';
 
     const minus = row.querySelector('.step[data-dir="-1"]');
     const plus = row.querySelector('.step[data-dir="1"]');
@@ -732,19 +719,6 @@ function bindEvents(){
     scheduleDemo();
   });
 
-  $('animalSelector').addEventListener('click', e => {
-    const btn = e.target.closest('.animal-chip');
-    if(!btn) return;
-    state.animal = btn.dataset.animal;
-    document.querySelectorAll('.animal-chip').forEach(b => {
-      const on = b.dataset.animal === state.animal;
-      b.classList.toggle('is-selected', on);
-      b.setAttribute('aria-pressed', on ? 'true' : 'false');
-    });
-    renderHero();
-    resetArena();
-  });
-
   $('playUlt').addEventListener('click', () => playUlt());
 
   $('characterForm').addEventListener('submit', async e => {
@@ -794,7 +768,6 @@ renderClasses();
 renderStats();
 renderSelects();
 renderElements();
-renderAnimalSelector();
 renderHero();
 updateStatsUI();
 bindEvents();
