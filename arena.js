@@ -76,7 +76,15 @@ function updateMeter() {
 }
 
 function refreshHeroPose() {
-  if (A.ready && fight && !fight.hero.busy) restoreHeroPose();
+    if (A.ready && fight && !fight.hero.busy) {
+        const c = currentAnimationClass();
+        const hasClaws = c && c.key === 'acrobat';
+        setPose(A.f1, fight && fight.hero.dead ? 'hurt' : (c ? c.pose : 'idle'), 'hero');
+        // Перерисовываем с когтями если акробат
+        if (hasClaws) {
+            A.f1.querySelector('.sprite').innerHTML = fighterSVG(c.pose, 'hero', null, true);
+        }
+    }
 }
 
 /* ============================================================
