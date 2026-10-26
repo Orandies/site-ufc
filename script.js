@@ -148,8 +148,8 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = nul
   // Определяем, рисовать ли когти и оружие
   const showClaws = claws !== null ? claws : (state.animationClass === 'acrobat');
   const showWeapon = weapon !== null ? weapon : (state.animationClass === 'weapon');
-  const clawColor = '#e8e8e8';
-  const clawDark = '#a0a0a0';
+  const clawColor = '#ff3333';
+  const clawDark = '#990000';
 
   const head = `<g transform="translate(${hx} ${hy})"> ${R(10,2,4,6,p.fur)}${R(18,1,4,7,p.fur)} ${R(10,6,13,9,p.fur)}${R(11,6,10,2,p.fur2)} ${R(21,10,6,4,p.light)}${R(25,10,2,2,p.dark)} ${side === 'hero' ? '' : R(18,8,3,3,p.eye) + R(17,7,4,1,p.dark)} ${side === 'hero' ?`<g fill="${p.youText}">
     ${R(12,7,1,1,p.youText)}${R(14,7,1,1,p.youText)}${R(13,8,1,2,p.youText)}
