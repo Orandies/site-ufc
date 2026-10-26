@@ -237,19 +237,17 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = nul
     }
   } else if(hurt){
     arms = RL(5,13,4,5,p.fur)+RL(3,10,4,4,p.fur)+RL(20,13,3,6,p.fur)+RL(20,10,4,4,p.fur);
-  } else {
-    // Обычная стойка (idle)
-    arms = RL(7,16,4,7,p.fur)+RL(6,21,5,5,p.fur)+RL(21,16,4,6,p.fur)+RL(23,15,5,5,p.fur);
-    // Когти в idle — торчат вниз из опущенных рук
-    if (showClaws) {
-      arms += R(6, 26, 1, 2, clawColor) + R(8, 26, 1, 2, clawColor) + R(10, 26, 1, 2, clawColor);
-      arms += R(23, 25, 1, 2, clawColor) + R(25, 25, 1, 2, clawColor) + R(27, 25, 1, 2, clawColor);
-    }
-    // Оружие в idle — меч в правой руке, торчит вниз
-    if (showWeapon) {
-      arms += `<g>${R(24,20,2,10,'#cfd8ea')}${R(25,29,1,2,'#8fa2c8')} ${R(22,19,5,2,p.fur)}${R(23,21,2,3,'#8b5a2b')}</g>`;
-    }
+} else {
+  // Обычная стойка (idle)
+  arms = RL(7,16,4,7,p.fur)+RL(6,21,5,5,p.fur)+RL(21,16,4,6,p.fur)+RL(23,15,5,5,p.fur);
+  // Когти в idle — присоединены к концам рук
+  if (showClaws) {
+    // Левая рука: когти на концах (y=26, под рукой)
+    arms += R(6, 26, 1, 2, clawColor) + R(8, 26, 1, 2, clawColor) + R(10, 26, 1, 2, clawColor);
+    // Правая рука: когти на концах (y=20, под рукой)
+    arms += R(23, 20, 1, 2, clawColor) + R(25, 20, 1, 2, clawColor) + R(27, 20, 1, 2, clawColor);
   }
+}
 
   if (bodyType === 'large') {
     arms += `<g transform="translate(${dx} ${dy})">${R(6,15,3,3,p.fur2)}${R(23,15,3,3,p.fur2)}</g>`;
@@ -689,10 +687,8 @@ function toast(text,error=false){
 let nameHinted=false;
 
 function renderBodyTypes(){
-  const hasClaws = state.animationClass === 'acrobat';
-  const hasWeapon = state.animationClass === 'weapon';
   $('bodyRow').innerHTML = CONFIG.bodyTypes.map(b => `<button type="button" class="body-btn" data-body="${b.key}" aria-pressed="false"> 
-    <span class="body-sprite body-${b.key}">${fighterSVG('idle', 'hero', b.key, hasClaws, hasWeapon)}</span> 
+    <span class="body-sprite body-${b.key}">${fighterSVG('idle', 'hero', b.key, false, false)}</span> 
     <b>${b.name}</b><small>${b.desc}</small> 
   </button>`).join('');
 }
