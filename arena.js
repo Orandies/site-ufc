@@ -23,8 +23,13 @@ const NEUTRAL = { key: 'cyber', color: '#fff3b0', core: '#ffffff' };
 const FX_COLORS = { damage: '#ff5a5f', stun: '#ffd23f', knockback: '#57d7ff', vampire: '#7ce38b', slow: '#57d7ff', dot: '#ff6b2c', steal: '#ff9d3c' };
 
 const alive = t => !!fight && t === fight.token;
-const setPose = (el, pose, side) => { el.querySelector('.sprite').innerHTML = fighterSVG(pose, side); };
 
+const setPose = (el, pose, side) => {
+  const c = currentAnimationClass();
+  const hasClaws = c && c.key === 'acrobat';
+  const hasWeapon = c && c.key === 'weapon';
+  el.querySelector('.sprite').innerHTML = fighterSVG(pose, side, null, hasClaws, hasWeapon);
+};
 function makeFight(calc) {
   return {
     token: ++tokenCounter, active: false, over: false, energy: 0, calc,
