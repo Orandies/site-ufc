@@ -29,7 +29,7 @@ const CONFIG = {
 
   animationClasses: [
     { key:'brawler', name:'БОРЕЦ',     icon:'glove', color:'#ff5a5f', pose:'guard', attackPose:'brawler_attack', desc:'Удары кулаками' },
-    { key:'acrobat', name:'ЗВЕРЬ',   icon:'kick',  color:'#57d7ff', pose:'kick',  attackPose:'acrobat_attack', desc:'Удары когтями' },
+    { key:'acrobat', name:'АКРОБАТ',   icon:'kick',  color:'#57d7ff', pose:'guard', attackPose:'acrobat_attack', desc:'Удары когтями' },
     { key:'weapon',  name:'ОРУЖЕЙНИК', icon:'sword', color:'#c9d4ef', pose:'sword', attackPose:'weapon_attack',  desc:'Удары холодным оружием' }
   ],
 
@@ -73,8 +73,7 @@ const ICONS = {
   fist:`<rect x="4" y="5" width="9" height="7" fill="#ffb454"/><rect x="4" y="3" width="2" height="4" fill="#ffd08a"/><rect x="7" y="3" width="2" height="4" fill="#ffd08a"/><rect x="10" y="3" width="2" height="4" fill="#ffd08a"/><rect x="2" y="8" width="3" height="4" fill="#ff9d3c"/><rect x="4" y="11" width="9" height="3" fill="#ff5a5f"/>`,
   glove:`<rect x="3" y="3" width="9" height="8" fill="#ff5a5f"/><rect x="3" y="3" width="9" height="2" fill="#ff9a9e"/><rect x="2" y="7" width="3" height="4" fill="#ff9a9e"/><rect x="4" y="11" width="8" height="3" fill="#ffd23f"/>`,
   boot:`<rect x="3" y="3" width="5" height="7" fill="#57d7ff"/><rect x="3" y="3" width="5" height="2" fill="#c9f2ff"/><rect x="3" y="9" width="9" height="4" fill="#2b8fb8"/><rect x="10" y="7" width="4" height="3" fill="#57d7ff"/><rect x="2" y="12" width="12" height="2" fill="#173a4a"/>`,
-  kick:`<rect x="2" y="4" width="6" height="3" fill="#57d7ff"/><rect x="6" y="6" width="6" height="3" fill="#57d7ff"/><rect x="10" y="3" width="4" height="5" fill="#ff5a5f"/><rect x="3" y="10" width="4" height="4" fill="#2b8fb8"/><rect x="2" y="13" width="6" height="2" fill="#173a4a"/>`,
-  agility:`<rect x="2" y="3" width="2" height="2" fill="#7ce38b"/><rect x="4" y="5" width="2" height="2" fill="#7ce38b"/><rect x="6" y="7" width="2" height="2" fill="#7ce38b"/><rect x="4" y="9" width="2" height="2" fill="#7ce38b"/><rect x="2" y="11" width="2" height="2" fill="#7ce38b"/><rect x="8" y="3" width="2" height="2" fill="#c6ff9a"/><rect x="10" y="5" width="2" height="2" fill="#c6ff9a"/><rect x="12" y="7" width="2" height="2" fill="#c6ff9a"/><rect x="10" y="9" width="2" height="2" fill="#c6ff9a"/><rect x="8" y="11" width="2" height="2" fill="#c6ff9a"/>`,
+  kick:`<rect x="2" y="4" width="3" height="2" fill="#e8e8e8"/><rect x="6" y="3" width="3" height="2" fill="#e8e8e8"/><rect x="10" y="4" width="3" height="2" fill="#e8e8e8"/><rect x="1" y="6" width="4" height="3" fill="#a0a0a0"/><rect x="5" y="5" width="4" height="3" fill="#a0a0a0"/><rect x="9" y="6" width="4" height="3" fill="#a0a0a0"/><rect x="3" y="9" width="9" height="3" fill="#ff5a5f"/>`,  agility:`<rect x="2" y="3" width="2" height="2" fill="#7ce38b"/><rect x="4" y="5" width="2" height="2" fill="#7ce38b"/><rect x="6" y="7" width="2" height="2" fill="#7ce38b"/><rect x="4" y="9" width="2" height="2" fill="#7ce38b"/><rect x="2" y="11" width="2" height="2" fill="#7ce38b"/><rect x="8" y="3" width="2" height="2" fill="#c6ff9a"/><rect x="10" y="5" width="2" height="2" fill="#c6ff9a"/><rect x="12" y="7" width="2" height="2" fill="#c6ff9a"/><rect x="10" y="9" width="2" height="2" fill="#c6ff9a"/><rect x="8" y="11" width="2" height="2" fill="#c6ff9a"/>`,
   bolt:`<path d="M9 1h5l-3 6h4l-7 8 2-6H5z" fill="#ffd23f"/><rect x="9" y="3" width="2" height="3" fill="#fff3b0"/>`,
   sword:`<rect x="9" y="2" width="3" height="9" fill="#c9d4ef"/><rect x="10" y="1" width="2" height="2" fill="#ffffff"/><rect x="10" y="3" width="1" height="7" fill="#8fa2c8"/><rect x="5" y="10" width="10" height="2" fill="#ffd23f"/><rect x="8" y="12" width="3" height="3" fill="#8b5a2b"/>`,
   file:`<rect x="3" y="2" width="9" height="12" fill="#ffd23f"/><rect x="4" y="3" width="6" height="2" fill="#7a5a12"/><rect x="5" y="7" width="5" height="1" fill="#7a5a12"/><rect x="5" y="9" width="5" height="1" fill="#7a5a12"/><rect x="5" y="11" width="3" height="1" fill="#7a5a12"/>`,
@@ -132,27 +131,36 @@ const PALETTES = {
   rival:{ fur:'#7f8bb0', fur2:'#a6b3d6', light:'#dbe4ff', dark:'#20263a', eye:'#ff6b6b', youText:'#0066ff' }
 };
 
-function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null){
+function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = false){
     const p = PALETTES[side];
     const R = (x,y,w,h,c) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`;
     const tail = `<g class="p-tail">${R(2,20,4,5,p.fur)}${R(1,18,3,3,p.fur2)}${R(4,23,5,4,p.fur)}</g>`;
     const hurt = pose === 'hurt';
     const hx = hurt ? -2 : 0, hy = pose === 'slam' ? 3 : hurt ? 1 : 0;
     
-    // --- СИСТЕМА ТЕЛОСЛОЖЕНИЯ ---
     const bodyType = forcedBody || state.body || 'medium';
     const mod = {
-        small:  { dx: 1, dw: -1 }, // Худой: сдвигаем к центру, делаем уже
-        medium: { dx: 0, dw: 0 },  // Обычный
-        large:  { dx: -1, dw: 2 }  // Качок: раздвигаем в стороны, делаем шире
+        small:  { dx: 1, dw: -1 },
+        medium: { dx: 0, dw: 0 },
+        large:  { dx: -1, dw: 2 }
     }[bodyType];
     
-    // Умная функция для конечностей: сама понимает, левая это часть или правая (относительно x=16)
     const RL = (x,y,w,h,c) => {
         const isLeft = x < 16;
         const adjX = isLeft ? x + mod.dx : x - mod.dx;
         const adjW = w + mod.dw;
         return R(Math.max(0, adjX), y, Math.max(1, adjW), h, c);
+    };
+
+    // Функция для отрисовки когтей (3 острых когтя)
+    const drawClaws = (x, y, direction) => {
+        const clawColor = '#e8e8e8';
+        const clawDark = '#a0a0a0';
+        if (direction === 'right') {
+            return `${R(x, y, 3, 1, clawColor)}${R(x+2, y+1, 2, 1, clawDark)}${R(x+3, y, 3, 1, clawColor)}${R(x+5, y+1, 2, 1, clawDark)}${R(x+6, y, 3, 1, clawColor)}${R(x+8, y+1, 2, 1, clawDark)}`;
+        } else {
+            return `${R(x-2, y, 3, 1, clawColor)}${R(x-4, y+1, 2, 1, clawDark)}${R(x-5, y, 3, 1, clawColor)}${R(x-7, y+1, 2, 1, clawDark)}${R(x-8, y, 3, 1, clawColor)}${R(x-10, y+1, 2, 1, clawDark)}`;
+        }
     };
 
     const head = `<g transform="translate(${hx} ${hy})"> ${R(10,2,4,6,p.fur)}${R(18,1,4,7,p.fur)} ${R(10,6,13,9,p.fur)}${R(11,6,10,2,p.fur2)} ${R(21,10,6,4,p.light)}${R(25,10,2,2,p.dark)} ${side === 'hero' ? '' : R(18,8,3,3,p.eye) + R(17,7,4,1,p.dark)} ${side === 'hero' ?`<g fill="${p.youText}">
@@ -161,30 +169,24 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null){
     ${R(20,7,1,3,p.youText)}${R(22,7,1,3,p.youText)}${R(20,9,3,1,p.youText)}
     </g>`: ''} </g>`;
     
-    // Для качка добавляем мощную шею
     const neck = bodyType === 'large' ? `<g transform="translate(${hx} ${hy})">${R(12,12,8,3,p.fur2)}</g>` : '';
 
     const dy = pose === 'slam' ? 3 : ['dash','thrust','teleport','flurry'].includes(pose) ? -1 : hurt ? 1 : 0;
     const dx = ['dash','thrust','teleport','flurry'].includes(pose) ? 2 : hurt ? -2 : 0;
 
-    // --- ТОРС (Рисуем 3 разных варианта, так как он цельный) ---
     let torso = '';
     if (bodyType === 'small') {
-        // Худой: узкий торс
         torso = `<g transform="translate(${dx} ${dy})"> ${R(12,14,8,11,p.fur)}${R(13,16,6,7,p.light)}${R(12,24,8,3,p.dark)} </g>`;
     } else if (bodyType === 'large') {
-        // Качок: широкие плечи, грудные мышцы
         torso = `<g transform="translate(${dx} ${dy})"> 
             ${R(8,14,16,11,p.fur)}${R(11,16,10,7,p.light)}${R(8,24,16,3,p.dark)}
             ${R(7,14,3,4,p.fur)}${R(22,14,3,4,p.fur)} 
             ${R(12,17,2,2,p.light)}${R(18,17,2,2,p.light)}
         </g>`;
     } else {
-        // Обычный
         torso = `<g transform="translate(${dx} ${dy})"> ${R(10,14,12,11,p.fur)}${R(13,16,7,7,p.light)}${R(10,24,12,3,p.dark)} </g>`;
     }
 
-    // --- НОГИ (Используем RL для автоматического изменения толщины) ---
     let legs = '';
     if(pose === 'kick' || pose === 'acrobat_attack'){
         legs = RL(11,26,5,8,p.fur)+RL(10,33,7,4,p.fur2)+RL(10,36,7,1,p.dark)
@@ -203,12 +205,16 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null){
         + RL(17,26,5,8,p.fur)+RL(17,33,8,4,p.fur2)+RL(17,36,8,1,p.dark);
     }
 
-    // --- РУКИ (Тоже используем RL) ---
     let arms = '';
     if(pose === 'guard'){
         arms = RL(7,17,4,5,p.fur)+RL(7,13,5,5,p.fur)+RL(21,17,5,4,p.fur)+RL(25,14,5,5,p.fur);
     } else if(pose === 'kick' || pose === 'acrobat_attack'){
+        // Акробат с когтями: руки вытянуты вперёд с когтями
         arms = RL(3,15,7,3,p.fur)+RL(1,14,4,4,p.fur)+RL(21,12,3,6,p.fur)+RL(21,9,4,4,p.fur);
+        if (claws) {
+            // Когти на вытянутых руках
+            arms += drawClaws(2, 13, 'left') + drawClaws(25, 8, 'right');
+        }
     } else if(pose === 'sword' || pose === 'weapon_attack'){
         arms = RL(7,17,4,6,p.fur)+RL(6,21,5,4,p.fur)+RL(21,15,5,4,p.fur)+RL(25,13,4,4,p.light)
         + `<g>${R(27,2,3,12,'#cfd8ea')}${R(28,0,2,2,'#f2f6ff')}${R(27,3,1,10,'#8fa2c8')} ${RL(24,13,8,2,p.fur)}${RL(26,15,2,4,'#8b5a2b')}</g>`;
@@ -226,7 +232,6 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null){
         arms = RL(7,16,4,7,p.fur)+RL(6,21,5,5,p.fur)+RL(21,16,4,6,p.fur)+RL(23,15,5,5,p.fur);
     }
     
-    // Для качка добавляем явные "бицепсы/плечи" поверх базовых рук
     if (bodyType === 'large') {
         arms += `<g transform="translate(${dx} ${dy})">${R(6,15,3,3,p.fur2)}${R(23,15,3,3,p.fur2)}</g>`;
     }
@@ -329,15 +334,17 @@ function renderElements(){
 }
 
 function renderAnimationPreview(){
-  $('animationPreviewGrid').innerHTML=CONFIG.animationClasses.map(c=>`
-    <div class="animation-preview-card" data-class="${c.key}" style="--card:${c.color}">
-      <div class="animation-preview-stage">
-        <div class="animation-preview-floor"></div>
-        <div class="animation-preview-fighter"><div class="sprite" id="preview-${c.key}">${fighterSVG(c.pose,'hero')}</div></div>
-      </div>
-      <div class="animation-preview-label">${c.name}</div>
-      <button type="button" class="animation-preview-btn" data-class="${c.key}">ВЫБРАТЬ И ПОКАЗАТЬ</button>
-    </div>`).join('');
+  $('animationPreviewGrid').innerHTML=CONFIG.animationClasses.map(c=>{
+    const hasClaws = c.key === 'acrobat';
+    return `<div class="animation-preview-card" data-class="${c.key}" style="--card:${c.color}"> 
+      <div class="animation-preview-stage"> 
+        <div class="animation-preview-floor"></div> 
+        <div class="animation-preview-fighter"><div class="sprite" id="preview-${c.key}">${fighterSVG(c.pose,'hero', null, hasClaws)}</div></div> 
+      </div> 
+      <div class="animation-preview-label">${c.name}</div> 
+      <button type="button" class="animation-preview-btn" data-class="${c.key}">ВЫБРАТЬ И ПОКАЗАТЬ</button> 
+    </div>`;
+  }).join('');
 }
 
 const currentAnimationClass=()=>byKey(CONFIG.animationClasses,state.animationClass);
@@ -483,9 +490,10 @@ async function playClassAttack(key){
   const btn=document.querySelector(`.animation-preview-btn[data-class="${key}"]`);
   if(btn) btn.disabled=true;
 
-  sprite.innerHTML=fighterSVG(c.attackPose,'hero');
+  const hasClaws = key === 'acrobat';
+  sprite.innerHTML=fighterSVG(c.attackPose,'hero', null, hasClaws);
   await sleep(850);
-  sprite.innerHTML=fighterSVG(c.pose,'hero');
+  sprite.innerHTML=fighterSVG(c.pose,'hero', null, hasClaws);
   if(btn) btn.disabled=false;
   attackLocks.delete(key);
   refreshHeroPose();
