@@ -79,10 +79,10 @@ function refreshHeroPose() {
     if (A.ready && fight && !fight.hero.busy) {
         const c = currentAnimationClass();
         const hasClaws = c && c.key === 'acrobat';
-        setPose(A.f1, fight && fight.hero.dead ? 'hurt' : (c ? c.pose : 'idle'), 'hero');
-        // Перерисовываем с когтями если акробат
+        const pose = fight && fight.hero.dead ? 'hurt' : (c ? c.pose : 'idle');
+        setPose(A.f1, pose, 'hero');
         if (hasClaws) {
-            A.f1.querySelector('.sprite').innerHTML = fighterSVG(c.pose, 'hero', null, true);
+            A.f1.querySelector('.sprite').innerHTML = fighterSVG(pose, 'hero', null, true);
         }
     }
 }
