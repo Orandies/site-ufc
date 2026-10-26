@@ -138,18 +138,42 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = nul
     large:  { dx: -1, dw: 2 }
   }[bodyType];
 
-  const RL = (x,y,w,h,c) => {
+  // Прямоугольник с поправкой на телосложение (используется и для рук, и для когтей)
+  const adj = (x,y,w,h) => {
     const isLeft = x < 16;
     const adjX = isLeft ? x + mod.dx : x - mod.dx;
-    const adjW = w + mod.dw;
-    return R(Math.max(0, adjX), y, Math.max(1, adjW), h, c);
+    return { x: Math.max(0, adjX), y, w: Math.max(1, w + mod.dw), h };
   };
+  const RL = (x,y,w,h,c) => { const a = adj(x,y,w,h); return R(a.x, a.y, a.w, a.h, c); };
 
   // Определяем, рисовать ли когти и оружие
   const showClaws = claws !== null ? claws : (state.animationClass === 'acrobat');
   const showWeapon = weapon !== null ? weapon : (state.animationClass === 'weapon');
   const clawColor = '#ff3333';
   const clawDark = '#990000';
+
+  // Когти всегда растут прямо из кулака (учитывают телосложение).
+  const spread = (n, len, start) => Array.from({length:n}, (_, i) => start + (n === 1 ? 0 : Math.round(i * (len - 1) / (n - 1))));
+  // вперёд (вправо) из передней руки
+  const clawsFwd = (x,y,w,h) => {
+    const a = adj(x,y,w,h), e = a.x + a.w, x0 = e - 1, x1 = e + 3;
+    // кулак у самого края кадра (крупное тело) - когти вперёд не поместятся, ставим вверх
+    if (x1 > 32) return clawsUp(x,y,w,h);
+    return spread(a.h >= 5 ? 3 : 2, a.h, a.y).map(ry =>
+      R(x0, ry, x1 - x0 - 1, 1, clawColor) + R(x1 - 1, ry, 1, 1, clawDark)).join('');
+  };
+  // вверх из кулака
+  const clawsUp = (x,y,w,h) => {
+    const a = adj(x,y,w,h), y0 = Math.max(0, a.y - 3);
+    return spread(a.w >= 5 ? 3 : 2, a.w, a.x).map(cx =>
+      R(cx, y0 + 1, 1, a.y - y0, clawColor) + R(cx, y0, 1, 1, clawDark)).join('');
+  };
+  // вниз из кулака
+  const clawsDown = (x,y,w,h) => {
+    const a = adj(x,y,w,h), yb = a.y + a.h;
+    return spread(a.w >= 5 ? 3 : 2, a.w, a.x).map(cx =>
+      R(cx, yb - 1, 1, 3, clawColor) + R(cx, yb + 2, 1, 1, clawDark)).join('');
+  };
 
   const head = `<g transform="translate(${hx} ${hy})"> ${R(10,2,4,6,p.fur)}${R(18,1,4,7,p.fur)} ${R(10,6,13,9,p.fur)}${R(11,6,10,2,p.fur2)} ${R(21,10,6,4,p.light)}${R(25,10,2,2,p.dark)} ${side === 'hero' ? '' : R(18,8,3,3,p.eye) + R(17,7,4,1,p.dark)} ${side === 'hero' ?`<g fill="${p.youText}">
     ${R(12,7,1,1,p.youText)}${R(14,7,1,1,p.youText)}${R(13,8,1,2,p.youText)}
@@ -196,10 +220,9 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = nul
   let arms = '';
   if(pose === 'guard'){
     arms = RL(7,17,4,5,p.fur)+RL(7,13,5,5,p.fur)+RL(21,17,5,4,p.fur)+RL(25,14,5,5,p.fur);
-    // Когти в боевой стойке
+    // Когти в боевой стойке: передняя рука - вперёд, задняя - вверх
     if (showClaws) {
-      arms += R(5, 14, 2, 1, clawColor) + R(5, 16, 2, 1, clawColor) + R(5, 18, 2, 1, clawColor);
-      arms += R(26, 15, 2, 1, clawColor) + R(26, 17, 2, 1, clawColor) + R(26, 19, 2, 1, clawColor);
+      arms += clawsFwd(25,14,5,5) + clawsUp(7,13,5,5);
     }
     // Оружие в боевой стойке (меч в правой руке, торчит вверх)
     if (showWeapon) {
@@ -209,8 +232,7 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = nul
     arms = RL(3,15,7,3,p.fur)+RL(1,14,4,4,p.fur)+RL(21,12,3,6,p.fur)+RL(21,9,4,4,p.fur);
     // Когти в атаке
     if (showClaws) {
-      arms += R(0, 13, 2, 1, clawColor) + R(0, 15, 2, 1, clawColor);
-      arms += R(27, 8, 2, 1, clawColor) + R(27, 10, 2, 1, clawColor);
+      arms += clawsFwd(21,9,4,4) + clawsUp(1,14,4,4);
     }
   } else if(pose === 'sword' || pose === 'weapon_attack'){
     arms = RL(7,17,4,6,p.fur)+RL(6,21,5,4,p.fur)+RL(21,15,5,4,p.fur)+RL(25,13,4,4,p.light)
@@ -240,12 +262,9 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = nul
 } else {
   // Обычная стойка (idle)
   arms = RL(7,16,4,7,p.fur)+RL(6,21,5,5,p.fur)+RL(21,16,4,6,p.fur)+RL(23,15,5,5,p.fur);
-  // Когти в idle — присоединены к концам рук
+  // Когти в idle: передняя рука - вперёд, задняя - вниз (растут из кулаков)
   if (showClaws) {
-    // Левая рука: когти на концах (y=26, под рукой)
-    arms += R(6, 26, 1, 2, clawColor) + R(8, 26, 1, 2, clawColor) + R(10, 26, 1, 2, clawColor);
-    // Правая рука: когти на концах (y=20, под рукой)
-    arms += R(23, 20, 1, 2, clawColor) + R(25, 20, 1, 2, clawColor) + R(27, 20, 1, 2, clawColor);
+    arms += clawsFwd(23,15,5,5) + clawsDown(6,21,5,5);
   }
 }
 
@@ -515,8 +534,6 @@ async function playClassAttack(key){
   if(btn) btn.disabled = false;
   attackLocks.delete(key);
   refreshHeroPose();
-  // Перерисовываем превью телосложения с новыми когтями/оружием
-  renderBodyTypes();
   syncBodyUI();
 }
 /* ============================================================
@@ -687,7 +704,7 @@ function toast(text,error=false){
 let nameHinted=false;
 
 function renderBodyTypes(){
-  $('bodyRow').innerHTML = CONFIG.bodyTypes.map(b => `<button type="button" class="body-btn" data-body="${b.key}" aria-pressed="false"> 
+  $('bodyRow').innerHTML = CONFIG.bodyTypes.map(b => `<button type="button" class="body-btn${b.key === state.body ? ' is-selected' : ''}" data-body="${b.key}" aria-pressed="${b.key === state.body}"> 
     <span class="body-sprite body-${b.key}">${fighterSVG('idle', 'hero', b.key, false, false)}</span> 
     <b>${b.name}</b><small>${b.desc}</small> 
   </button>`).join('');
@@ -715,8 +732,6 @@ function syncBodyUI(){
     }
   });
   
-  // Перерисовываем кнопки телосложения с когтями/оружием если выбран класс
-  renderBodyTypes();
 }
 
 function syncClassUI(){
