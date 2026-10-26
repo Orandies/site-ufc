@@ -28,13 +28,13 @@ const CONFIG = {
   ],
 
   animationClasses: [
-    { key:'brawler', name:'БОРЕЦ',     icon:'glove', color:'#ff5a5f', pose:'guard', attackPose:'brawler_attack', desc:'Кулаки и когти.' },
-    { key:'acrobat', name:'АКРОБАТ',   icon:'kick',  color:'#57d7ff', pose:'kick',  attackPose:'acrobat_attack', desc:'Удары ногами и вертушки.' },
-    { key:'weapon',  name:'ОРУЖЕЙНИК', icon:'sword', color:'#c9d4ef', pose:'sword', attackPose:'weapon_attack',  desc:'Холодное оружие' }
+    { key:'brawler', name:'БОРЕЦ',     icon:'glove', color:'#ff5a5f', pose:'guard', attackPose:'brawler_attack', desc:'Удары кулаками' },
+    { key:'acrobat', name:'ЗВЕРЬ',   icon:'kick',  color:'#57d7ff', pose:'kick',  attackPose:'acrobat_attack', desc:'Удары когтями' },
+    { key:'weapon',  name:'ОРУЖЕЙНИК', icon:'sword', color:'#c9d4ef', pose:'sword', attackPose:'weapon_attack',  desc:'Удары холодным оружием' }
   ],
 
   ultTypes: [
-    { key:'dash',     name:'Рывок-удар',        pose:'dash',     verb:'РЫВОК',    desc:'Боец срывается с места и бьёт в упор.' },
+    { key:'dash',     name:'Рывок',        pose:'dash',     verb:'РЫВОК',    desc:'Боец срывается с места и бьёт в упор.' },
     { key:'aoe',      name:'Зональный взрыв',   pose:'slam',     verb:'ВЗРЫВ',    desc:'Руки вниз - ударная волна на 360°.' },
     { key:'drop',     name:'Снаряд сверху',     pose:'raise',    verb:'СВЕРХУ',   desc:'Рука вверх - шар падает на противника.' },
     { key:'charge',   name:'Мощный заряд',      pose:'thrust',   verb:'ПРОБОЙ',   desc:'Пробивающий луч по прямой.' },
@@ -44,7 +44,7 @@ const CONFIG = {
   ],
 
   ultEffects: [
-    { key:'damage',    name:'Чистый урон',       pop:'-40',    desc:'Массивный урон.' },
+    { key:'damage',    name:'Усиленый удар',       pop:'-40',    desc:'Массивный урон.' },
     { key:'stun',      name:'Оглушение',         pop:'STUN!',  desc:'Враг обездвижен на 1.5 сек.' },
     { key:'knockback', name:'Отбрасывание',      pop:'ОТБРОС', desc:'Врага отбрасывает к краю.' },
     { key:'vampire',   name:'Вампиризм',         pop:'+20 HP', desc:'Возвращает часть здоровья.' },
@@ -301,9 +301,12 @@ function renderIcons(){
 }
 
 function renderStats(){
-  $('statsList').innerHTML=CONFIG.stats.map(s=>`
-    <div class="stat-row" data-stat="${s.key}" style="--stat:${s.color}" title="${s.hint}">
-      <span class="stat-name">${icon(s.icon)}${s.label}</span>
+  $('statsList').innerHTML = CONFIG.stats.map(s => `
+    <div class="stat-row" data-stat="${s.key}" style="--stat:${s.color}">
+      <span class="stat-name">
+        <span class="stat-label">${icon(s.icon)}${s.label}</span>
+        <small class="stat-hint">${s.hint}</small>
+      </span>
       <div class="stat-bar">
         <div class="seg base"></div>
         ${Array.from({length:CONFIG.maxPerStat},(_,i)=>`<button type="button" class="seg" data-level="${i+1}" aria-label="${s.label}: уровень ${i+1}"></button>`).join('')}
