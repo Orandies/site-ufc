@@ -1,13 +1,6 @@
-/* ============================================================
-   АРЕНА: настоящий бой в реальном времени
-   Здесь считаются урон, шкала энергии, ИИ соперника и все эффекты
-   ультимейта. Числа лежат в BALANCE - меняй их, не трогая код ниже.
 
-   Загружается ПЕРЕД script.js. На верхнем уровне тут только
-   объявления: всё, что обращается к DOM и CONFIG, вызывается позже.
-   ============================================================ */
 const BALANCE = {
-  rival: { hp: 150, dmg: 6, cooldown: 2000, dodge: 0.05 },  // соперник: здоровье, урон, пауза между ударами (мс), шанс уклонения
+  rival: { hp: 300, dmg: 6, cooldown: 2000, dodge: 0.05 },  // соперник: здоровье, урон, пауза между ударами (мс), шанс уклонения
   hero:  { cooldown: 900 },                                 // пауза между обычными ударами при СКОРОСТИ 100 (мс)
   dodgePerAgi: 0.004,                                       // уклонение бойца = 5% + (ЛОВКОСТЬ − 100) × 0.4%
   energy: { max: 100, perDealt: 1.5, perTaken: 1 },         // шкала ульты: энергии за нанесённый / полученный урон
@@ -41,9 +34,6 @@ function makeFight(calc) {
   };
 }
 
-/* ============================================================
-   ИНИЦИАЛИЗАЦИЯ
-   ============================================================ */
 function initArena() {
   A = {
     ready: true,
@@ -63,7 +53,6 @@ function initArena() {
     if (aiOn && fight && fight.active) fight.rival.cd = Math.max(fight.rival.cd, 1200);
   });
 
-  // Z - удар, X - ульта (по физическим клавишам: работает и в русской раскладке)
   document.addEventListener('keydown', e => {
     if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.code !== 'KeyZ' && e.code !== 'KeyX') return;
@@ -80,7 +69,6 @@ function initArena() {
   newFight();
 }
 
-// Вызывается из script.js после любого изменения жетонов
 function updateMeter() {
   if (!A.ready) return;
   const sig = JSON.stringify(calculateStats());
@@ -122,7 +110,7 @@ function newFight() {
 function startFight() {
   if (fight.active) return;
   fight.active = true;
-  fight.rival.cd = 1600;               // небольшая фора перед первым ударом соперника
+  fight.rival.cd = 1600;               
   setStatus('БОЙ!');
 }
 
@@ -239,7 +227,6 @@ function updateButtons() {
   A.btnUlt.title = ready ? 'Ультимейт готов (X)' : `Нужно ${fight.calc.charge} энергии`;
 }
 
-// Плашки статусов под полосками здоровья
 function updateChips() {
   if (!fight) return;
   const { hero, rival } = fight;
@@ -510,7 +497,7 @@ function tick(now) {
   }
 
   if (aiOn && canRivalAct()) {
-    r.cd -= dt * (r.slow > 0 ? BALANCE.slow.factor : 1);   // замедление реально растягивает паузу между ударами
+    r.cd -= dt * (r.slow > 0 ? BALANCE.slow.factor : 1); 
     if (r.cd <= 0) rivalAttack();
   }
 
@@ -613,19 +600,14 @@ async function heroUlt() {
             await sleep(400); if (!alive(token)) return;
             
         } else if (t.key === 'flurry') {
-            // 1. Подходим к противнику
             f1.style.transition = 'transform 0.3s steps(6)';
             f1.style.transform = 'translateX(500px)';
             await sleep(350); if (!alive(token)) return;
-            
-            // 2. Наносим шквал ударов с визуальными эффектами на враге
             setPose(f1, 'flurry', 'hero');
             for (let i = 0; i < 5; i++) {
                 if (!alive(token)) return;
                 f1.style.transform = `translateX(${500 + (i % 4 === 0 ? 20 : -20)}px)`;
                 SFX.punch(i);
-                
-                // 🔥 Мини-удары: вспышка на враге + искры его стихии
                 flash(f2);
                 const p2 = fpos(f2);
                 sparks(p2.x, p2.top + 30, el, 4);
@@ -679,7 +661,6 @@ async function heroUlt() {
     }
 }
 
-// Момент попадания: настоящий урон + настоящий эффект
 function ultImpact(eff, el) {
   const f = fight, r = f.rival, h = f.hero, { f1, f2, arena } = A;
   const g = geometry();
@@ -692,7 +673,7 @@ function ultImpact(eff, el) {
   SFX.impact(el.key, eff.key);
 
   const dealt = dealToRival(direct, { color: FX_COLORS[eff.key], big: true });
-  if (f.over) return;                       // добили прямым уроном
+  if (f.over) return;                       
 
   const color = FX_COLORS[eff.key];
   const p2 = fpos(f2), p1 = fpos(f1);
