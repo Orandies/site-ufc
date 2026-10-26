@@ -258,7 +258,23 @@ input::placeholder{color:#6f6553}
 .stat-help{color:var(--muted);font-size:20px;text-align:right}
 .stat-row{--stat:var(--yellow);display:grid;grid-template-columns:170px 1fr 34px 48px 34px;align-items:center;gap:10px;
   padding:14px 10px;margin-bottom:10px;background:#0c0a08;border-left:5px solid var(--stat)}
-.stat-name{display:flex;align-items:center;gap:10px;font-family:var(--pixel);font-size:10px;color:var(--stat)}
+.stat-name {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-family: var(--pixel);
+    font-size: 10px;
+    color: var(--stat);
+}
+
+.stat-hint {
+    font-family: var(--body);
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: normal;
+    line-height: 1.2;
+    letter-spacing: 0;
+}
 .stat-bar{display:flex;gap:5px;height:28px}
 .seg{flex:1;background:#241f19;border:2px solid var(--line);cursor:pointer;padding:0;transition:transform .1s,border-color .1s}
 .seg:hover{transform:translateY(-2px);border-color:var(--stat)}
