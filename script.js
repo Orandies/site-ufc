@@ -304,8 +304,8 @@ function renderStats(){
   $('statsList').innerHTML = CONFIG.stats.map(s => `
     <div class="stat-row" data-stat="${s.key}" style="--stat:${s.color}">
       <span class="stat-name">
-        <span class="stat-label">${icon(s.icon)}${s.label}</span>
-        <small class="stat-hint">${s.hint}</small>
+        <span class="stat-title">${icon(s.icon)}${s.label}</span>
+        <span class="stat-hint">${s.hint}</span>
       </span>
       <div class="stat-bar">
         <div class="seg base"></div>
