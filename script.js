@@ -2,13 +2,6 @@
    CONFIG
    ============================================================ */
 const CONFIG = {
-  // Куда отправлять анкеты. Если сайт и сервер на одном домене - оставь как есть.
-  // Если сайт лежит отдельно (GitHub Pages и т.п.) - впиши полный адрес: 'https://твой-сервер.com/api/fighters'
-  apiUrl: '/api/fighters',
-  maxVoiceSeconds: 15,
-  draftKey: 'ufc_fighter_draft_v1',
-  draftDays: 14,
-
   bodyTypes: [
     { key:'small',  name:'МАЛЕНЬКИЙ', desc:'Худой, твинк' },
     { key:'medium', name:'СРЕДНИЙ',   desc:'Стандартное телосложение' },
@@ -151,8 +144,6 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = nul
         const adjW = w + mod.dw;
         return R(Math.max(0, adjX), y, Math.max(1, adjW), h, c);
     };
-
-    // 🔥 Определяем, рисовать ли когти
     const showClaws = claws !== null ? claws : (state.animationClass === 'acrobat');
     const clawColor = '#e8e8e8';
     const clawDark = '#a0a0a0';
@@ -202,14 +193,12 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = nul
     let arms = '';
     if(pose === 'guard'){
         arms = RL(7,17,4,5,p.fur)+RL(7,13,5,5,p.fur)+RL(21,17,5,4,p.fur)+RL(25,14,5,5,p.fur);
-        // 🔥 Когти в боевой стойке: торчат вперёд из согнутых рук
         if (showClaws) {
             arms += R(5, 14, 2, 1, clawColor) + R(5, 16, 2, 1, clawColor) + R(5, 18, 2, 1, clawColor);
             arms += R(26, 15, 2, 1, clawColor) + R(26, 17, 2, 1, clawColor) + R(26, 19, 2, 1, clawColor);
         }
     } else if(pose === 'kick' || pose === 'acrobat_attack'){
         arms = RL(3,15,7,3,p.fur)+RL(1,14,4,4,p.fur)+RL(21,12,3,6,p.fur)+RL(21,9,4,4,p.fur);
-        // 🔥 Когти в позе атаки: торчат из вытянутых рук
         if (showClaws) {
             arms += R(0, 13, 2, 1, clawColor) + R(0, 15, 2, 1, clawColor);
             arms += R(27, 8, 2, 1, clawColor) + R(27, 10, 2, 1, clawColor);
@@ -228,7 +217,6 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = nul
     } else if(hurt){
         arms = RL(5,13,4,5,p.fur)+RL(3,10,4,4,p.fur)+RL(20,13,3,6,p.fur)+RL(20,10,4,4,p.fur);
     } else {
-        // 🔥 Обычная стойка (idle): руки опущены, когти торчат вниз
         arms = RL(7,16,4,7,p.fur)+RL(6,21,5,5,p.fur)+RL(21,16,4,6,p.fur)+RL(23,15,5,5,p.fur);
         if (showClaws) {
             arms += R(6, 26, 1, 2, clawColor) + R(8, 26, 1, 2, clawColor) + R(10, 26, 1, 2, clawColor);
@@ -527,7 +515,6 @@ function stopVoice(key){
 async function toggleVoice(key){
   const existing=voiceSessions[key];
 
-  // Повторный клик = остановить
   if(existing && existing.recorder && existing.recorder.state!=='inactive'){
     stopVoice(key);
     return;
@@ -595,7 +582,6 @@ async function toggleVoice(key){
       if(session.seconds>=CONFIG.maxVoiceSeconds) stopVoice(key);
     },1000);
 
-    // Короткая пауза, чтобы звук кнопки не попал в запись
     await sleep(160);
     SFX.hold(true);
     recorder.start(250);
@@ -685,12 +671,10 @@ function syncBodyUI(){
         btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     
-    // 1. Мгновенно обновляем бойца на арене (если она уже инициализирована)
     if (typeof refreshHeroPose === 'function') {
         refreshHeroPose();
     }
     
-    // 2. Мгновенно обновляем бойцов в карточках выбора анимаций
     CONFIG.animationClasses.forEach(c => {
         const sprite = $('preview-' + c.key);
         if (sprite) sprite.innerHTML = fighterSVG(c.pose, 'hero');
@@ -702,10 +686,8 @@ function syncClassUI(){
     card.classList.toggle('is-selected',card.dataset.class===state.animationClass));
 }
 
-// Подсветка поля, если в нём запрещённые слова (браузер покажет сообщение при отправке)
 function checkClean(el){
     if(!el) return;
-    // Имя обязательно, фразы - по желанию
     el.setCustomValidity(
         el.id === 'charName' && !el.value.trim()
             ? 'Введи имя персонажа.'
@@ -722,7 +704,7 @@ function randomizeFighter(){
   refreshHeroPose();
   randomizeStats(true);
   updateLoadout();
-  randomizeUltimate(true);          // запускает демо с новым классом
+  randomizeUltimate(true);          
   SFX.diceLand();
   toast('Случайный боец собран! Допиши ссылку, контакт и фразы.');
   saveDraft();
@@ -773,7 +755,6 @@ function loadDraft(){
   DRAFT_FIELDS.forEach(id=>{ if(typeof d.fields[id]==='string') $(id).value=d.fields[id]; });
 $('charName').value = sanitizeName($('charName').value);
 
-  // Жетоны восстанавливаем, только если они в допустимых пределах
   const stats={}; let sum=0, ok=true;
   CONFIG.stats.forEach(st=>{
     const v=Number(d.stats[st.key]||0);
@@ -882,7 +863,7 @@ async function sendFighter(payload){
 
   const fd=new FormData();
   fd.append('payload',JSON.stringify(payload));
-  fd.append('website',$('website').value);           // ловушка для ботов (должна быть пустой)
+  fd.append('website',$('website').value);           
   if(state.voiceWin) fd.append('voiceWin',state.voiceWin,'win.'+audioExt(state.voiceWin));
   if(state.voiceUlt) fd.append('voiceUlt',state.voiceUlt,'ult.'+audioExt(state.voiceUlt));
 
@@ -978,13 +959,11 @@ $('charName').addEventListener('input', e => {
     SFX.select();
   });
 
-  // Случайное имя и случайный боец
   $('randomFighter').addEventListener('click',e=>{
     e.preventDefault();
     rollDice(e.currentTarget,randomizeFighter);
   });
 
-  // Черновик
   ['input','change','click'].forEach(ev=>$('characterForm').addEventListener(ev,scheduleSave));
   window.addEventListener('pagehide',saveDraft);
   $('clearDraft').addEventListener('click',()=>{
@@ -1034,7 +1013,6 @@ $('charName').addEventListener('input', e => {
     rollDice(e.currentTarget,randomizeUltimate);
   });
 
-  // ЕДИНСТВЕНный делегированный обработчик голоса (без дублей)
   $('characterForm').addEventListener('click',e=>{
     const rec=e.target.closest('[data-voice]');
     if(rec){ e.preventDefault(); toggleVoice(rec.dataset.voice); return; }
@@ -1072,7 +1050,6 @@ $('charName').addEventListener('input', e => {
       return;
     }
 
-    // Завершаем активные записи, чтобы аудио точно попало в анкету
     await finalizeVoices();
     SFX.click();
     openReview(buildPayload());
