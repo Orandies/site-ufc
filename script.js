@@ -29,7 +29,7 @@ const CONFIG = {
 
   animationClasses: [
     { key:'brawler', name:'БОРЕЦ',     icon:'glove', color:'#ff5a5f', pose:'guard', attackPose:'brawler_attack', desc:'Удары кулаками' },
-    { key:'acrobat', name:'АКРОБАТ',   icon:'kick',  color:'#57d7ff', pose:'guard', attackPose:'acrobat_attack', desc:'Удары когтями' },
+    { key:'acrobat', name:'ЗВЕРЬ',   icon:'kick',  color:'#57d7ff', pose:'guard', attackPose:'acrobat_attack', desc:'Удары когтями' },
     { key:'weapon',  name:'ОРУЖЕЙНИК', icon:'sword', color:'#c9d4ef', pose:'sword', attackPose:'weapon_attack',  desc:'Удары холодным оружием' }
   ],
 
@@ -131,7 +131,7 @@ const PALETTES = {
   rival:{ fur:'#7f8bb0', fur2:'#a6b3d6', light:'#dbe4ff', dark:'#20263a', eye:'#ff6b6b', youText:'#0066ff' }
 };
 
-function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = false){
+function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = null){
     const p = PALETTES[side];
     const R = (x,y,w,h,c) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`;
     const tail = `<g class="p-tail">${R(2,20,4,5,p.fur)}${R(1,18,3,3,p.fur2)}${R(4,23,5,4,p.fur)}</g>`;
@@ -152,16 +152,10 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = fal
         return R(Math.max(0, adjX), y, Math.max(1, adjW), h, c);
     };
 
-    // Функция для отрисовки когтей (3 острых когтя)
-    const drawClaws = (x, y, direction) => {
-        const clawColor = '#e8e8e8';
-        const clawDark = '#a0a0a0';
-        if (direction === 'right') {
-            return `${R(x, y, 3, 1, clawColor)}${R(x+2, y+1, 2, 1, clawDark)}${R(x+3, y, 3, 1, clawColor)}${R(x+5, y+1, 2, 1, clawDark)}${R(x+6, y, 3, 1, clawColor)}${R(x+8, y+1, 2, 1, clawDark)}`;
-        } else {
-            return `${R(x-2, y, 3, 1, clawColor)}${R(x-4, y+1, 2, 1, clawDark)}${R(x-5, y, 3, 1, clawColor)}${R(x-7, y+1, 2, 1, clawDark)}${R(x-8, y, 3, 1, clawColor)}${R(x-10, y+1, 2, 1, clawDark)}`;
-        }
-    };
+    // 🔥 Определяем, рисовать ли когти
+    const showClaws = claws !== null ? claws : (state.animationClass === 'acrobat');
+    const clawColor = '#e8e8e8';
+    const clawDark = '#a0a0a0';
 
     const head = `<g transform="translate(${hx} ${hy})"> ${R(10,2,4,6,p.fur)}${R(18,1,4,7,p.fur)} ${R(10,6,13,9,p.fur)}${R(11,6,10,2,p.fur2)} ${R(21,10,6,4,p.light)}${R(25,10,2,2,p.dark)} ${side === 'hero' ? '' : R(18,8,3,3,p.eye) + R(17,7,4,1,p.dark)} ${side === 'hero' ?`<g fill="${p.youText}">
     ${R(12,7,1,1,p.youText)}${R(14,7,1,1,p.youText)}${R(13,8,1,2,p.youText)}
@@ -208,12 +202,17 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = fal
     let arms = '';
     if(pose === 'guard'){
         arms = RL(7,17,4,5,p.fur)+RL(7,13,5,5,p.fur)+RL(21,17,5,4,p.fur)+RL(25,14,5,5,p.fur);
+        // 🔥 Когти в боевой стойке: торчат вперёд из согнутых рук
+        if (showClaws) {
+            arms += R(5, 14, 2, 1, clawColor) + R(5, 16, 2, 1, clawColor) + R(5, 18, 2, 1, clawColor);
+            arms += R(26, 15, 2, 1, clawColor) + R(26, 17, 2, 1, clawColor) + R(26, 19, 2, 1, clawColor);
+        }
     } else if(pose === 'kick' || pose === 'acrobat_attack'){
-        // Акробат с когтями: руки вытянуты вперёд с когтями
         arms = RL(3,15,7,3,p.fur)+RL(1,14,4,4,p.fur)+RL(21,12,3,6,p.fur)+RL(21,9,4,4,p.fur);
-        if (claws) {
-            // Когти на вытянутых руках
-            arms += drawClaws(2, 13, 'left') + drawClaws(25, 8, 'right');
+        // 🔥 Когти в позе атаки: торчат из вытянутых рук
+        if (showClaws) {
+            arms += R(0, 13, 2, 1, clawColor) + R(0, 15, 2, 1, clawColor);
+            arms += R(27, 8, 2, 1, clawColor) + R(27, 10, 2, 1, clawColor);
         }
     } else if(pose === 'sword' || pose === 'weapon_attack'){
         arms = RL(7,17,4,6,p.fur)+RL(6,21,5,4,p.fur)+RL(21,15,5,4,p.fur)+RL(25,13,4,4,p.light)
@@ -229,7 +228,12 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = fal
     } else if(hurt){
         arms = RL(5,13,4,5,p.fur)+RL(3,10,4,4,p.fur)+RL(20,13,3,6,p.fur)+RL(20,10,4,4,p.fur);
     } else {
+        // 🔥 Обычная стойка (idle): руки опущены, когти торчат вниз
         arms = RL(7,16,4,7,p.fur)+RL(6,21,5,5,p.fur)+RL(21,16,4,6,p.fur)+RL(23,15,5,5,p.fur);
+        if (showClaws) {
+            arms += R(6, 26, 1, 2, clawColor) + R(8, 26, 1, 2, clawColor) + R(10, 26, 1, 2, clawColor);
+            arms += R(23, 25, 1, 2, clawColor) + R(25, 25, 1, 2, clawColor) + R(27, 25, 1, 2, clawColor);
+        }
     }
     
     if (bodyType === 'large') {
@@ -238,7 +242,6 @@ function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = fal
 
     return `<svg viewBox="0 0 32 40" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"> ${tail}${legs}${torso}${head}${neck}<g>${arms}</g></svg>`;
 }
-
 /* ============================================================
    ЭФФЕКТЫ
    ============================================================ */
@@ -334,12 +337,12 @@ function renderElements(){
 }
 
 function renderAnimationPreview(){
-  $('animationPreviewGrid').innerHTML=CONFIG.animationClasses.map(c=>{
+  $('animationPreviewGrid').innerHTML = CONFIG.animationClasses.map(c => {
     const hasClaws = c.key === 'acrobat';
     return `<div class="animation-preview-card" data-class="${c.key}" style="--card:${c.color}"> 
       <div class="animation-preview-stage"> 
         <div class="animation-preview-floor"></div> 
-        <div class="animation-preview-fighter"><div class="sprite" id="preview-${c.key}">${fighterSVG(c.pose,'hero', null, hasClaws)}</div></div> 
+        <div class="animation-preview-fighter"><div class="sprite" id="preview-${c.key}">${fighterSVG(c.pose, 'hero', null, hasClaws)}</div></div> 
       </div> 
       <div class="animation-preview-label">${c.name}</div> 
       <button type="button" class="animation-preview-btn" data-class="${c.key}">ВЫБРАТЬ И ПОКАЗАТЬ</button> 
@@ -476,29 +479,28 @@ function randomizeUltimate(silent=false){
   saveDraft();
 }
 
-const attackLocks=new Set();
+const attackLocks = new Set();
 async function playClassAttack(key){
   if(attackLocks.has(key)) return;
-  const c=byKey(CONFIG.animationClasses,key), sprite=$('preview-'+key);
-  if(!c||!sprite) return;
+  const c = byKey(CONFIG.animationClasses, key), sprite = $('preview-' + key);
+  if(!c || !sprite) return;
   attackLocks.add(key);
   SFX.classAttack(key);
 
-  state.animationClass=key;
-  document.querySelectorAll('.animation-preview-card').forEach(card=>
-    card.classList.toggle('is-selected',card.dataset.class===key));
-  const btn=document.querySelector(`.animation-preview-btn[data-class="${key}"]`);
-  if(btn) btn.disabled=true;
+  state.animationClass = key;
+  document.querySelectorAll('.animation-preview-card').forEach(card =>
+    card.classList.toggle('is-selected', card.dataset.class === key));
+  const btn = document.querySelector(`.animation-preview-btn[data-class="${key}"]`);
+  if(btn) btn.disabled = true;
 
   const hasClaws = key === 'acrobat';
-  sprite.innerHTML=fighterSVG(c.attackPose,'hero', null, hasClaws);
+  sprite.innerHTML = fighterSVG(c.attackPose, 'hero', null, hasClaws);
   await sleep(850);
-  sprite.innerHTML=fighterSVG(c.pose,'hero', null, hasClaws);
-  if(btn) btn.disabled=false;
+  sprite.innerHTML = fighterSVG(c.pose, 'hero', null, hasClaws);
+  if(btn) btn.disabled = false;
   attackLocks.delete(key);
   refreshHeroPose();
 }
-
 /* ============================================================
    ГОЛОС: ЗАПИСЬ / СТОП / ПРОСЛУШИВАНИЕ / УДАЛЕНИЕ
    ============================================================ */
