@@ -124,111 +124,138 @@ const PALETTES = {
   rival:{ fur:'#7f8bb0', fur2:'#a6b3d6', light:'#dbe4ff', dark:'#20263a', eye:'#ff6b6b', youText:'#0066ff' }
 };
 
-function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = null){
-    const p = PALETTES[side];
-    const R = (x,y,w,h,c) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`;
-    const tail = `<g class="p-tail">${R(2,20,4,5,p.fur)}${R(1,18,3,3,p.fur2)}${R(4,23,5,4,p.fur)}</g>`;
-    const hurt = pose === 'hurt';
-    const hx = hurt ? -2 : 0, hy = pose === 'slam' ? 3 : hurt ? 1 : 0;
-    
-    const bodyType = forcedBody || state.body || 'medium';
-    const mod = {
-        small:  { dx: 1, dw: -1 },
-        medium: { dx: 0, dw: 0 },
-        large:  { dx: -1, dw: 2 }
-    }[bodyType];
-    
-    const RL = (x,y,w,h,c) => {
-        const isLeft = x < 16;
-        const adjX = isLeft ? x + mod.dx : x - mod.dx;
-        const adjW = w + mod.dw;
-        return R(Math.max(0, adjX), y, Math.max(1, adjW), h, c);
-    };
-    const showClaws = claws !== null ? claws : (state.animationClass === 'acrobat');
-    const clawColor = '#e8e8e8';
-    const clawDark = '#a0a0a0';
+function fighterSVG(pose = 'idle', side = 'hero', forcedBody = null, claws = null, weapon = null){
+  const p = PALETTES[side];
+  const R = (x,y,w,h,c) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`;
+  const tail = `<g class="p-tail">${R(2,20,4,5,p.fur)}${R(1,18,3,3,p.fur2)}${R(4,23,5,4,p.fur)}</g>`;
+  const hurt = pose === 'hurt';
+  const hx = hurt ? -2 : 0, hy = pose === 'slam' ? 3 : hurt ? 1 : 0;
 
-    const head = `<g transform="translate(${hx} ${hy})"> ${R(10,2,4,6,p.fur)}${R(18,1,4,7,p.fur)} ${R(10,6,13,9,p.fur)}${R(11,6,10,2,p.fur2)} ${R(21,10,6,4,p.light)}${R(25,10,2,2,p.dark)} ${side === 'hero' ? '' : R(18,8,3,3,p.eye) + R(17,7,4,1,p.dark)} ${side === 'hero' ?`<g fill="${p.youText}">
+  const bodyType = forcedBody || state.body || 'medium';
+  const mod = {
+    small:  { dx: 1, dw: -1 },
+    medium: { dx: 0, dw: 0 },
+    large:  { dx: -1, dw: 2 }
+  }[bodyType];
+
+  const RL = (x,y,w,h,c) => {
+    const isLeft = x < 16;
+    const adjX = isLeft ? x + mod.dx : x - mod.dx;
+    const adjW = w + mod.dw;
+    return R(Math.max(0, adjX), y, Math.max(1, adjW), h, c);
+  };
+
+  // Определяем, рисовать ли когти и оружие
+  const showClaws = claws !== null ? claws : (state.animationClass === 'acrobat');
+  const showWeapon = weapon !== null ? weapon : (state.animationClass === 'weapon');
+  const clawColor = '#e8e8e8';
+  const clawDark = '#a0a0a0';
+
+  const head = `<g transform="translate(${hx} ${hy})"> ${R(10,2,4,6,p.fur)}${R(18,1,4,7,p.fur)} ${R(10,6,13,9,p.fur)}${R(11,6,10,2,p.fur2)} ${R(21,10,6,4,p.light)}${R(25,10,2,2,p.dark)} ${side === 'hero' ? '' : R(18,8,3,3,p.eye) + R(17,7,4,1,p.dark)} ${side === 'hero' ?`<g fill="${p.youText}">
     ${R(12,7,1,1,p.youText)}${R(14,7,1,1,p.youText)}${R(13,8,1,2,p.youText)}
     ${R(16,7,3,1,p.youText)}${R(16,9,3,1,p.youText)}${R(16,7,1,3,p.youText)}${R(18,7,1,3,p.youText)}
     ${R(20,7,1,3,p.youText)}${R(22,7,1,3,p.youText)}${R(20,9,3,1,p.youText)}
     </g>`: ''} </g>`;
-    
-    const neck = bodyType === 'large' ? `<g transform="translate(${hx} ${hy})">${R(12,12,8,3,p.fur2)}</g>` : '';
 
-    const dy = pose === 'slam' ? 3 : ['dash','thrust','teleport','flurry'].includes(pose) ? -1 : hurt ? 1 : 0;
-    const dx = ['dash','thrust','teleport','flurry'].includes(pose) ? 2 : hurt ? -2 : 0;
+  const neck = bodyType === 'large' ? `<g transform="translate(${hx} ${hy})">${R(12,12,8,3,p.fur2)}</g>` : '';
 
-    let torso = '';
-    if (bodyType === 'small') {
-        torso = `<g transform="translate(${dx} ${dy})"> ${R(12,14,8,11,p.fur)}${R(13,16,6,7,p.light)}${R(12,24,8,3,p.dark)} </g>`;
-    } else if (bodyType === 'large') {
-        torso = `<g transform="translate(${dx} ${dy})"> 
-            ${R(8,14,16,11,p.fur)}${R(11,16,10,7,p.light)}${R(8,24,16,3,p.dark)}
-            ${R(7,14,3,4,p.fur)}${R(22,14,3,4,p.fur)} 
-            ${R(12,17,2,2,p.light)}${R(18,17,2,2,p.light)}
-        </g>`;
-    } else {
-        torso = `<g transform="translate(${dx} ${dy})"> ${R(10,14,12,11,p.fur)}${R(13,16,7,7,p.light)}${R(10,24,12,3,p.dark)} </g>`;
+  const dy = pose === 'slam' ? 3 : ['dash','thrust','teleport','flurry'].includes(pose) ? -1 : hurt ? 1 : 0;
+  const dx = ['dash','thrust','teleport','flurry'].includes(pose) ? 2 : hurt ? -2 : 0;
+
+  let torso = '';
+  if (bodyType === 'small') {
+    torso = `<g transform="translate(${dx} ${dy})"> ${R(12,14,8,11,p.fur)}${R(13,16,6,7,p.light)}${R(12,24,8,3,p.dark)} </g>`;
+  } else if (bodyType === 'large') {
+    torso = `<g transform="translate(${dx} ${dy})"> 
+      ${R(8,14,16,11,p.fur)}${R(11,16,10,7,p.light)}${R(8,24,16,3,p.dark)}
+      ${R(7,14,3,4,p.fur)}${R(22,14,3,4,p.fur)} 
+      ${R(12,17,2,2,p.light)}${R(18,17,2,2,p.light)}
+    </g>`;
+  } else {
+    torso = `<g transform="translate(${dx} ${dy})"> ${R(10,14,12,11,p.fur)}${R(13,16,7,7,p.light)}${R(10,24,12,3,p.dark)} </g>`;
+  }
+
+  let legs = '';
+  if(pose === 'kick' || pose === 'acrobat_attack'){
+    legs = RL(11,26,5,8,p.fur)+RL(10,33,7,4,p.fur2)+RL(10,36,7,1,p.dark)
+    + RL(16,22,8,4,p.fur)+RL(23,19,5,4,p.fur)+RL(26,17,5,5,p.fur2)+RL(29,18,2,3,p.fur);
+  } else if(pose === 'slam'){
+    legs = RL(8,25,6,7,p.fur)+RL(7,31,8,5,p.fur2)+RL(7,35,8,1,p.dark)
+    + RL(18,25,6,7,p.fur)+RL(18,31,8,5,p.fur2)+RL(18,35,8,1,p.dark);
+  } else if(['dash','thrust','teleport','flurry'].includes(pose)){
+    legs = RL(5,26,9,4,p.fur)+RL(1,24,5,4,p.fur2)
+    + RL(18,25,5,9,p.fur)+RL(18,33,8,4,p.fur2)+RL(18,36,8,1,p.dark);
+  } else if(pose === 'raise' || hurt || pose === 'uppercut' || pose === 'brawler_attack'){
+    legs = RL(8,26,5,8,p.fur)+RL(7,33,7,4,p.fur2)+RL(7,36,7,1,p.dark)
+    + RL(19,26,5,8,p.fur)+RL(19,33,7,4,p.fur2)+RL(19,36,7,1,p.dark);
+  } else {
+    legs = RL(10,26,5,8,p.fur)+RL(9,33,7,4,p.fur2)+RL(9,36,7,1,p.dark)
+    + RL(17,26,5,8,p.fur)+RL(17,33,8,4,p.fur2)+RL(17,36,8,1,p.dark);
+  }
+
+  let arms = '';
+  if(pose === 'guard'){
+    arms = RL(7,17,4,5,p.fur)+RL(7,13,5,5,p.fur)+RL(21,17,5,4,p.fur)+RL(25,14,5,5,p.fur);
+    // Когти в боевой стойке
+    if (showClaws) {
+      arms += R(5, 14, 2, 1, clawColor) + R(5, 16, 2, 1, clawColor) + R(5, 18, 2, 1, clawColor);
+      arms += R(26, 15, 2, 1, clawColor) + R(26, 17, 2, 1, clawColor) + R(26, 19, 2, 1, clawColor);
     }
-
-    let legs = '';
-    if(pose === 'kick' || pose === 'acrobat_attack'){
-        legs = RL(11,26,5,8,p.fur)+RL(10,33,7,4,p.fur2)+RL(10,36,7,1,p.dark)
-        + RL(16,22,8,4,p.fur)+RL(23,19,5,4,p.fur)+RL(26,17,5,5,p.fur2)+RL(29,18,2,3,p.fur);
-    } else if(pose === 'slam'){
-        legs = RL(8,25,6,7,p.fur)+RL(7,31,8,5,p.fur2)+RL(7,35,8,1,p.dark)
-        + RL(18,25,6,7,p.fur)+RL(18,31,8,5,p.fur2)+RL(18,35,8,1,p.dark);
-    } else if(['dash','thrust','teleport','flurry'].includes(pose)){
-        legs = RL(5,26,9,4,p.fur)+RL(1,24,5,4,p.fur2)
-        + RL(18,25,5,9,p.fur)+RL(18,33,8,4,p.fur2)+RL(18,36,8,1,p.dark);
-    } else if(pose === 'raise' || hurt || pose === 'uppercut' || pose === 'brawler_attack'){
-        legs = RL(8,26,5,8,p.fur)+RL(7,33,7,4,p.fur2)+RL(7,36,7,1,p.dark)
-        + RL(19,26,5,8,p.fur)+RL(19,33,7,4,p.fur2)+RL(19,36,7,1,p.dark);
-    } else {
-        legs = RL(10,26,5,8,p.fur)+RL(9,33,7,4,p.fur2)+RL(9,36,7,1,p.dark)
-        + RL(17,26,5,8,p.fur)+RL(17,33,8,4,p.fur2)+RL(17,36,8,1,p.dark);
+    // Оружие в боевой стойке (меч в правой руке, торчит вверх)
+    if (showWeapon) {
+      arms += `<g>${R(26,6,2,8,'#cfd8ea')}${R(27,4,1,2,'#f2f6ff')}${R(26,7,1,6,'#8fa2c8')} ${R(24,13,6,2,p.fur)}${R(25,15,2,3,'#8b5a2b')}</g>`;
     }
-
-    let arms = '';
-    if(pose === 'guard'){
-        arms = RL(7,17,4,5,p.fur)+RL(7,13,5,5,p.fur)+RL(21,17,5,4,p.fur)+RL(25,14,5,5,p.fur);
-        if (showClaws) {
-            arms += R(5, 14, 2, 1, clawColor) + R(5, 16, 2, 1, clawColor) + R(5, 18, 2, 1, clawColor);
-            arms += R(26, 15, 2, 1, clawColor) + R(26, 17, 2, 1, clawColor) + R(26, 19, 2, 1, clawColor);
-        }
-    } else if(pose === 'kick' || pose === 'acrobat_attack'){
-        arms = RL(3,15,7,3,p.fur)+RL(1,14,4,4,p.fur)+RL(21,12,3,6,p.fur)+RL(21,9,4,4,p.fur);
-        if (showClaws) {
-            arms += R(0, 13, 2, 1, clawColor) + R(0, 15, 2, 1, clawColor);
-            arms += R(27, 8, 2, 1, clawColor) + R(27, 10, 2, 1, clawColor);
-        }
-    } else if(pose === 'sword' || pose === 'weapon_attack'){
-        arms = RL(7,17,4,6,p.fur)+RL(6,21,5,4,p.fur)+RL(21,15,5,4,p.fur)+RL(25,13,4,4,p.light)
-        + `<g>${R(27,2,3,12,'#cfd8ea')}${R(28,0,2,2,'#f2f6ff')}${R(27,3,1,10,'#8fa2c8')} ${RL(24,13,8,2,p.fur)}${RL(26,15,2,4,'#8b5a2b')}</g>`;
-    } else if(pose === 'raise'){
-        arms = RL(8,10,3,7,p.fur)+RL(7,6,4,4,p.fur)+RL(22,10,3,7,p.fur)+RL(23,6,4,4,p.fur);
-    } else if(pose === 'slam'){
-        arms = RL(5,20,4,7,p.fur)+RL(3,26,5,5,p.fur)+RL(24,20,4,7,p.fur)+RL(24,26,5,5,p.fur);
-    } else if(['dash','thrust','teleport','flurry'].includes(pose)){
-        arms = RL(4,17,6,3,p.fur)+RL(2,16,4,4,p.fur)+RL(23,17,7,3,p.fur)+RL(29,16,3,5,p.fur);
-    } else if(pose === 'uppercut' || pose === 'brawler_attack'){
-        arms = RL(7,17,4,6,p.fur)+RL(6,21,5,4,p.fur)+RL(21,10,5,4,p.fur)+RL(25,6,4,5,p.fur);
-    } else if(hurt){
-        arms = RL(5,13,4,5,p.fur)+RL(3,10,4,4,p.fur)+RL(20,13,3,6,p.fur)+RL(20,10,4,4,p.fur);
-    } else {
-        arms = RL(7,16,4,7,p.fur)+RL(6,21,5,5,p.fur)+RL(21,16,4,6,p.fur)+RL(23,15,5,5,p.fur);
-        if (showClaws) {
-            arms += R(6, 26, 1, 2, clawColor) + R(8, 26, 1, 2, clawColor) + R(10, 26, 1, 2, clawColor);
-            arms += R(23, 25, 1, 2, clawColor) + R(25, 25, 1, 2, clawColor) + R(27, 25, 1, 2, clawColor);
-        }
+  } else if(pose === 'kick' || pose === 'acrobat_attack'){
+    arms = RL(3,15,7,3,p.fur)+RL(1,14,4,4,p.fur)+RL(21,12,3,6,p.fur)+RL(21,9,4,4,p.fur);
+    // Когти в атаке
+    if (showClaws) {
+      arms += R(0, 13, 2, 1, clawColor) + R(0, 15, 2, 1, clawColor);
+      arms += R(27, 8, 2, 1, clawColor) + R(27, 10, 2, 1, clawColor);
     }
-    
-    if (bodyType === 'large') {
-        arms += `<g transform="translate(${dx} ${dy})">${R(6,15,3,3,p.fur2)}${R(23,15,3,3,p.fur2)}</g>`;
+  } else if(pose === 'sword' || pose === 'weapon_attack'){
+    arms = RL(7,17,4,6,p.fur)+RL(6,21,5,4,p.fur)+RL(21,15,5,4,p.fur)+RL(25,13,4,4,p.light)
+    + `<g>${R(27,2,3,12,'#cfd8ea')}${R(28,0,2,2,'#f2f6ff')}${R(27,3,1,10,'#8fa2c8')} ${RL(24,13,8,2,p.fur)}${RL(26,15,2,4,'#8b5a2b')}</g>`;
+  } else if(pose === 'raise'){
+    arms = RL(8,10,3,7,p.fur)+RL(7,6,4,4,p.fur)+RL(22,10,3,7,p.fur)+RL(23,6,4,4,p.fur);
+    if (showWeapon) {
+      arms += `<g>${R(23,0,2,8,'#cfd8ea')}${R(24,-2,1,2,'#f2f6ff')}${R(23,1,1,6,'#8fa2c8')} ${R(22,7,4,2,p.fur)}${R(23,9,2,3,'#8b5a2b')}</g>`;
     }
+  } else if(pose === 'slam'){
+    arms = RL(5,20,4,7,p.fur)+RL(3,26,5,5,p.fur)+RL(24,20,4,7,p.fur)+RL(24,26,5,5,p.fur);
+    if (showWeapon) {
+      arms += `<g>${R(25,24,2,8,'#cfd8ea')}${R(26,31,1,2,'#8fa2c8')} ${R(23,26,4,2,p.fur)}</g>`;
+    }
+  } else if(['dash','thrust','teleport','flurry'].includes(pose)){
+    arms = RL(4,17,6,3,p.fur)+RL(2,16,4,4,p.fur)+RL(23,17,7,3,p.fur)+RL(29,16,3,5,p.fur);
+    if (showWeapon) {
+      arms += `<g>${R(30,10,2,8,'#cfd8ea')}${R(31,8,1,2,'#f2f6ff')} ${R(28,16,4,2,p.fur)}</g>`;
+    }
+  } else if(pose === 'uppercut' || pose === 'brawler_attack'){
+    arms = RL(7,17,4,6,p.fur)+RL(6,21,5,4,p.fur)+RL(21,10,5,4,p.fur)+RL(25,6,4,5,p.fur);
+    if (showWeapon) {
+      arms += `<g>${R(26,0,2,8,'#cfd8ea')}${R(27,-2,1,2,'#f2f6ff')} ${R(24,9,4,2,p.fur)}</g>`;
+    }
+  } else if(hurt){
+    arms = RL(5,13,4,5,p.fur)+RL(3,10,4,4,p.fur)+RL(20,13,3,6,p.fur)+RL(20,10,4,4,p.fur);
+  } else {
+    // Обычная стойка (idle)
+    arms = RL(7,16,4,7,p.fur)+RL(6,21,5,5,p.fur)+RL(21,16,4,6,p.fur)+RL(23,15,5,5,p.fur);
+    // Когти в idle — торчат вниз из опущенных рук
+    if (showClaws) {
+      arms += R(6, 26, 1, 2, clawColor) + R(8, 26, 1, 2, clawColor) + R(10, 26, 1, 2, clawColor);
+      arms += R(23, 25, 1, 2, clawColor) + R(25, 25, 1, 2, clawColor) + R(27, 25, 1, 2, clawColor);
+    }
+    // Оружие в idle — меч в правой руке, торчит вниз
+    if (showWeapon) {
+      arms += `<g>${R(24,20,2,10,'#cfd8ea')}${R(25,29,1,2,'#8fa2c8')} ${R(22,19,5,2,p.fur)}${R(23,21,2,3,'#8b5a2b')}</g>`;
+    }
+  }
 
-    return `<svg viewBox="0 0 32 40" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"> ${tail}${legs}${torso}${head}${neck}<g>${arms}</g></svg>`;
+  if (bodyType === 'large') {
+    arms += `<g transform="translate(${dx} ${dy})">${R(6,15,3,3,p.fur2)}${R(23,15,3,3,p.fur2)}</g>`;
+  }
+
+  return `<svg viewBox="0 0 32 40" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"> ${tail}${legs}${torso}${head}${neck}<g>${arms}</g></svg>`;
 }
 /* ============================================================
    ЭФФЕКТЫ
@@ -327,10 +354,11 @@ function renderElements(){
 function renderAnimationPreview(){
   $('animationPreviewGrid').innerHTML = CONFIG.animationClasses.map(c => {
     const hasClaws = c.key === 'acrobat';
+    const hasWeapon = c.key === 'weapon';
     return `<div class="animation-preview-card" data-class="${c.key}" style="--card:${c.color}"> 
       <div class="animation-preview-stage"> 
         <div class="animation-preview-floor"></div> 
-        <div class="animation-preview-fighter"><div class="sprite" id="preview-${c.key}">${fighterSVG(c.pose, 'hero', null, hasClaws)}</div></div> 
+        <div class="animation-preview-fighter"><div class="sprite" id="preview-${c.key}">${fighterSVG(c.pose, 'hero', null, hasClaws, hasWeapon)}</div></div> 
       </div> 
       <div class="animation-preview-label">${c.name}</div> 
       <button type="button" class="animation-preview-btn" data-class="${c.key}">ВЫБРАТЬ И ПОКАЗАТЬ</button> 
@@ -482,12 +510,16 @@ async function playClassAttack(key){
   if(btn) btn.disabled = true;
 
   const hasClaws = key === 'acrobat';
-  sprite.innerHTML = fighterSVG(c.attackPose, 'hero', null, hasClaws);
+  const hasWeapon = key === 'weapon';
+  sprite.innerHTML = fighterSVG(c.attackPose, 'hero', null, hasClaws, hasWeapon);
   await sleep(850);
-  sprite.innerHTML = fighterSVG(c.pose, 'hero', null, hasClaws);
+  sprite.innerHTML = fighterSVG(c.pose, 'hero', null, hasClaws, hasWeapon);
   if(btn) btn.disabled = false;
   attackLocks.delete(key);
   refreshHeroPose();
+  // Перерисовываем превью телосложения с новыми когтями/оружием
+  renderBodyTypes();
+  syncBodyUI();
 }
 /* ============================================================
    ГОЛОС: ЗАПИСЬ / СТОП / ПРОСЛУШИВАНИЕ / УДАЛЕНИЕ
@@ -657,28 +689,38 @@ function toast(text,error=false){
 let nameHinted=false;
 
 function renderBodyTypes(){
-    $('bodyRow').innerHTML = CONFIG.bodyTypes.map(b => `<button type="button" class="body-btn" data-body="${b.key}" aria-pressed="false"> 
-        <span class="body-sprite body-${b.key}">${fighterSVG('idle', 'hero', b.key)}</span> 
-        <b>${b.name}</b><small>${b.desc}</small> 
-    </button>`).join('');
+  const hasClaws = state.animationClass === 'acrobat';
+  const hasWeapon = state.animationClass === 'weapon';
+  $('bodyRow').innerHTML = CONFIG.bodyTypes.map(b => `<button type="button" class="body-btn" data-body="${b.key}" aria-pressed="false"> 
+    <span class="body-sprite body-${b.key}">${fighterSVG('idle', 'hero', b.key, hasClaws, hasWeapon)}</span> 
+    <b>${b.name}</b><small>${b.desc}</small> 
+  </button>`).join('');
 }
 
 function syncBodyUI(){
-    document.body.dataset.body = state.body;
-    document.querySelectorAll('.body-btn').forEach(btn => {
-        const on = btn.dataset.body === state.body;
-        btn.classList.toggle('is-selected', on);
-        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    });
-    
-    if (typeof refreshHeroPose === 'function') {
-        refreshHeroPose();
+  document.body.dataset.body = state.body;
+  document.querySelectorAll('.body-btn').forEach(btn => {
+    const on = btn.dataset.body === state.body;
+    btn.classList.toggle('is-selected', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  
+  if (typeof refreshHeroPose === 'function') {
+    refreshHeroPose();
+  }
+  
+  // Перерисовываем бойцов в карточках с учётом текущего класса
+  CONFIG.animationClasses.forEach(c => {
+    const sprite = $('preview-' + c.key);
+    if (sprite) {
+      const hasClaws = c.key === 'acrobat';
+      const hasWeapon = c.key === 'weapon';
+      sprite.innerHTML = fighterSVG(c.pose, 'hero', null, hasClaws, hasWeapon);
     }
-    
-    CONFIG.animationClasses.forEach(c => {
-        const sprite = $('preview-' + c.key);
-        if (sprite) sprite.innerHTML = fighterSVG(c.pose, 'hero');
-    });
+  });
+  
+  // Перерисовываем кнопки телосложения с когтями/оружием если выбран класс
+  renderBodyTypes();
 }
 
 function syncClassUI(){
