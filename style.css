@@ -55,7 +55,6 @@ i[data-icon]{display:inline-flex;vertical-align:middle;font-style:normal;flex:no
 @keyframes ticker{to{transform:translateX(-100%)}}
 
 .container{max-width:1360px;margin:0 auto;padding:24px 20px}
-.masthead{border:3px solid var(--orange);background:var(--panel);padding:20px 24px 24px;margin-bottom:26px;box-shadow:6px 6px 0 #000}
 .mast-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
 .badge{font-family:var(--pixel);font-size:10px;background:var(--red);color:#14120f;padding:7px 10px;border:2px solid #000;box-shadow:3px 3px 0 #000}
 .mast-code{font-family:var(--pixel);font-size:9px;color:var(--muted);letter-spacing:1px}
@@ -95,8 +94,14 @@ i[data-icon]{display:inline-flex;vertical-align:middle;font-style:normal;flex:no
         -4px  4px 0 #000, -4px  0   0 #000;
 }
 
-.logo-yellow { color: #FFD23F; }
-.logo-red    { color: #FF2D55; }
+.logo-yellow {
+    color: #FFD23F;
+    filter: drop-shadow(0 0 8px rgba(255, 210, 63, 0.4));
+}
+.logo-red {
+    color: #FF2D55;
+    filter: drop-shadow(0 0 8px rgba(255, 45, 85, 0.4));
+}
 .logo-white  { color: #FFFFFF; }
 
 /* UNITED и FURRY — крупные */
@@ -429,7 +434,6 @@ input::placeholder{color:#6f6553}
 @media(max-width:1080px){
   .main-layout{grid-template-columns:1fr}
   .preview-panel{position:static}
-  .masthead h1{font-size:22px}
  .logo-container {
     display: flex;
     justify-content: center;
