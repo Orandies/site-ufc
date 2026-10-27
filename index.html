@@ -13,6 +13,26 @@
   <span class="snd-icon"></span><span class="snd-label">ЗВУК: ВКЛ</span>
 </button>
 
+<div class="music-widget" id="musicWidget">
+  <button type="button" class="music-toggle" id="musicToggle" aria-pressed="false" title="Включить / выключить музыку">
+    <span class="mus-icon">&#9834;</span><span class="mus-label">МУЗЫКА: ВЫКЛ</span>
+  </button>
+  <button type="button" class="music-next" id="musicNext" title="Следующий трек" aria-label="Следующий трек" hidden>&#9654;&#9654;</button>
+  <span class="music-track" id="musicTrack" hidden></span>
+</div>
+
+<div class="music-gate" id="musicGate" role="dialog" aria-modal="true" aria-labelledby="musicGateTitle" hidden>
+  <div class="music-gate-box">
+    <h2 id="musicGateTitle">ВКЛЮЧИТЬ МУЗЫКУ?</h2>
+    <p>На сайте играет фоновая музыка в стиле 16-бит. Её можно выключить в любой момент кнопкой «МУЗЫКА».</p>
+    <div class="music-gate-btns">
+      <button type="button" class="pixel-btn" id="musicYes">&#9834; ДА</button>
+      <button type="button" class="pixel-btn music-no" id="musicNo">НЕТ</button>
+    </div>
+    <small>Твой выбор запомнится в cookie.</small>
+  </div>
+</div>
+
 <div class="crt"></div>
 <div class="grain"></div>
 <div class="scanlines"></div>
@@ -315,6 +335,7 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="sound.js"></script>
+<script src="music.js"></script>
 <script src="arena.js"></script>
 <script src="script.js"></script>
 </body>
