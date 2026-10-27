@@ -93,11 +93,11 @@ const MUSIC = (() => {
         { bar: 4,  step: 0, text: 'о даааа',                    lang: 'ru-RU', pitch: 1.5, rate: 0.62 },
         { bar: 5,  step: 0, text: 'эта песня от Орандисааааа',    lang: 'ru-RU', pitch: 1.3, rate: 0.72 },
         { bar: 8,  step: 0, text: 'ля ля ля',                         lang: 'ru-RU', pitch: 1.2, rate: 0.9 },
-        { bar: 8,  step: 4, text: 'юнайтед фурри кон дваааа',                         lang: 'ru-RU', pitch: 1.4, rate: 0.9 },
-        { bar: 8,  step: 8, text: 'ля ля',                       lang: 'ru-RU', pitch: 1.6, rate: 0.8 },
+        { bar: 8,  step: 0, text: 'юнайтед фурри кон дваааа',                         lang: 'ru-RU', pitch: 1.4, rate: 0.9 },
+        { bar: 8,  step: 0, text: 'ля ля',                       lang: 'ru-RU', pitch: 1.6, rate: 0.8 },
         { bar: 12, step: 0, text: 'после юнайтед фурри кон один',                         lang: 'ru-RU', pitch: 1.2, rate: 0.9 },
-        { bar: 12, step: 4, text: 'а я мандарин',                         lang: 'ru-RU', pitch: 1.4, rate: 0.9 },
-        { bar: 12, step: 8, text: 'ляяяяя ля ля',                       lang: 'ru-RU', pitch: 1.6, rate: 0.8 }
+        { bar: 12, step: 0, text: 'а я мандарин',                         lang: 'ru-RU', pitch: 1.4, rate: 0.9 },
+        { bar: 12, step: 0, text: 'ляяяяя ля ля',                       lang: 'ru-RU', pitch: 1.6, rate: 0.8 }
       ]
     }
   ];
