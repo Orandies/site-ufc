@@ -13,23 +13,29 @@
   <span class="snd-icon"></span><span class="snd-label">ЗВУК: ВКЛ</span>
 </button>
 
-<div class="music-widget" id="musicWidget">
-  <button type="button" class="music-toggle" id="musicToggle" aria-pressed="false" title="Включить / выключить музыку">
-    <span class="mus-icon">&#9834;</span><span class="mus-label">МУЗЫКА: ВЫКЛ</span>
-  </button>
-  <button type="button" class="music-next" id="musicNext" title="Следующий трек" aria-label="Следующий трек" hidden>&#9654;&#9654;</button>
-  <span class="music-track" id="musicTrack" hidden></span>
+<div class="music-widget">
+  <div class="music-group" id="musicGroup">
+    <button class="music-toggle" id="musicToggle" type="button" aria-pressed="false">
+      <span class="snd-icon">♪</span>
+      <span class="mus-label">МУЗЫКА: ВЫКЛ</span>
+    </button>
+    <div class="music-volume-wrap" id="musicVolumeWrap" hidden>
+      <input type="range" id="musicVolume" min="0" max="100" value="70">
+      <span id="musicVolNum">70</span>
+    </div>
+  </div>
+  <button class="music-next" id="musicNext" type="button" hidden>▶▶</button>
+  <div class="music-track" id="musicTrack" hidden></div>
 </div>
 
-<div class="music-gate" id="musicGate" role="dialog" aria-modal="true" aria-labelledby="musicGateTitle" hidden>
+<div class="music-gate" id="musicGate" hidden>
   <div class="music-gate-box">
-    <h2 id="musicGateTitle">ВКЛЮЧИТЬ МУЗЫКУ?</h2>
+    <h2>ВКЛЮЧИТЬ МУЗЫКУ?</h2>
     <p>На сайте играет фоновая музыка в стиле 16-бит. Её можно выключить в любой момент кнопкой «МУЗЫКА».</p>
     <div class="music-gate-btns">
-      <button type="button" class="pixel-btn" id="musicYes">&#9834; ДА</button>
-      <button type="button" class="pixel-btn music-no" id="musicNo">НЕТ</button>
+      <button class="pixel-btn" id="musicYes" type="button">ДА</button>
+      <button class="pixel-btn music-no" id="musicNo" type="button">НЕТ</button>
     </div>
-    <small>Твой выбор запомнится в cookie.</small>
   </div>
 </div>
 
@@ -112,7 +118,7 @@
         
         <div class="form-group" style="display: none;">
           <label for="charName" > <span class="limit">/ 12 символов</span></label>
-          <input type="text" id="charName" name="charName" maxlength="12" placeholder="Orandies" required autocomplete="off" spellcheck="false">
+          <input type="text" id="charName" name="charName" maxlength="12" placeholder="Orandies" autocomplete="off" spellcheck="false">
           <div class="name-tools">
           </div>
         </div>
@@ -132,7 +138,7 @@
 
         <div class="form-group" style="display: none;">
           <label for="contact">Как с тобой связаться <span class="limit">/ Telegram или почта</span></label>
-          <input type="text" id="contact" name="contact" maxlength="80" placeholder="@username или name@mail.com" required autocomplete="off">
+          <input type="text" id="contact" name="contact" maxlength="80" placeholder="@username или name@mail.com" autocomplete="off">
           <small class="hint">При возникновении вопросов организаторы будут писать сюда</small>
         </div>
 
@@ -312,7 +318,7 @@
 
       <label class="consent">
         <input type="checkbox" id="consent" name="consent" required>
-        <span>Я согласен(на), что организаторы сохранят мою анкету и голосовые записи для создания игры.</span>
+        <span>Я согласен(на), что организаторы сохранят мою анкету и голосовые записи для создания игры, а спрайты моего персонажа будут созданы с помощью ИИ.</span>
       </label>
 
       <button type="submit" class="pixel-btn submit-btn">
