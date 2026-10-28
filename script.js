@@ -2,6 +2,10 @@
    CONFIG
    ============================================================ */
 const CONFIG = {
+  // АДРЕС СЕРВЕРА, КУДА УХОДЯТ АНКЕТЫ (POST, multipart/form-data). Ответ сервера: {"ok":true,"id":"..."}
+  // Пока пусто - отправка не сработает. Пример: 'https://твой-домен.ru/api/submit'
+  apiUrl: '',
+
   bodyTypes: [
     { key:'small',  name:'МАЛЕНЬКИЙ', desc:'Худой, твинк' },
     { key:'medium', name:'СРЕДНИЙ',   desc:'Стандартное телосложение' },
@@ -840,7 +844,7 @@ function buildPayload(){
   return {
     event:'United Furry Con',
     character:{
-      name:$('charName').value.trim().toUpperCase(),
+      name:($('charName').value.trim()||'ИГРОК 1').toUpperCase(),
       reference:$('refLink').value.trim(),
       detail:$('visualDetail').value.trim(),
       contact:$('contact').value.trim(),
@@ -851,7 +855,7 @@ function buildPayload(){
       ultimate:{type:state.ultType,effect:state.ultEffect,element:state.element},
       quotes:{win:$('winQuote').value.trim(),ultimate:$('ultQuote').value.trim()}
     },
-    consent:{aiSprites:$('consentAi').checked,storage:$('consent').checked},
+    consent:{aiSprites:$('consentAi')?$('consentAi').checked:$('consent').checked,storage:$('consent').checked},
     meta:{version:'1.4',submittedAt:new Date().toISOString()}
   };
 }
@@ -908,6 +912,10 @@ function openReview(payload){
 }
 
 async function sendFighter(payload){
+  if(!CONFIG.apiUrl){
+    toast('Сервер приёма анкет не настроен: укажи apiUrl в начале script.js.',true);
+    return;
+  }
   const btn=$('characterForm').querySelector('.submit-btn');
   const btnHTML=btn.innerHTML;
   btn.disabled=true;
